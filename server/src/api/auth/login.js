@@ -3,18 +3,26 @@ const bcrypt = require("bcryptjs");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    return res
+      .status(400)
+      .json({ message: "Email and password are required" });
   }
 
   try {
-    const [users] = await pool.query("SELECT * FROM register WHERE email = ?", [email]);
+    // Use promise() for async/await
+    const [users] = await pool
+      .promise()
+      .query("SELECT * FROM users WHERE email = ?", [email]);
+
     if (users.length === 0) {
       return res.status(401).json({ message: "❌ Invalid email or password" });
     }
 
     const user = users[0];
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
       return res.status(401).json({ message: "❌ Invalid email or password" });
     }
@@ -29,4 +37,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = login;   // 👈 exporting the function directly
+module.exports = login;
