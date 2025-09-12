@@ -1,20 +1,20 @@
+// src/App.js
 import React from 'react';  
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
+import Dashboard from "./pages/dashboard.jsx"; // Import the dashboard
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <div className="pt-20">
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/login" element={<><Navbar /><Login /></>} />
+        <Route path="/register" element={<><Navbar /><Register /></>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
     </Router>
   );
 }
