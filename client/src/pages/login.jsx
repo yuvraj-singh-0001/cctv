@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Logo from "../components/logo.png"; // logo import 
+import Logo from "../components/logo.png"; // logo import
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -42,14 +42,14 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-200">
+    <div className="flex items-center justify-center min-h-screen bg-[#CDE1E6]">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-[380px]"
+        className="bg-white/95 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-[380px] border-t-4 border-[#07485E]"
       >
-        <h2 className="flex items-center justify-center text-3xl font-bold text-gray-800 mb-6 space-x-2">
+        <h2 className="flex items-center justify-center text-3xl font-bold text-[#07485E] mb-6 space-x-2">
           <img src={Logo} alt="CCTV Logo" className="w-10 h-10" />
           <span>CCTV Manage</span>
         </h2>
@@ -64,7 +64,7 @@ function Login() {
             value={form.email}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
           />
 
           <motion.input
@@ -76,7 +76,7 @@ function Login() {
             value={form.password}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
           />
 
           <motion.button
@@ -84,7 +84,7 @@ function Login() {
             disabled={loading}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+            className="w-full bg-[#07485E] hover:bg-[#063646] text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </motion.button>
@@ -95,7 +95,7 @@ function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="mt-4 text-center text-sm font-medium text-gray-700"
+            className="mt-4 text-center text-sm font-medium text-[#07485E]"
           >
             {message}
           </motion.p>
@@ -105,7 +105,7 @@ function Login() {
           Don’t have an account?{" "}
           <Link
             to="/register"
-            className="text-indigo-600 font-medium hover:underline"
+            className="text-[#07485E] font-medium hover:underline"
           >
             Register
           </Link>

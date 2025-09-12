@@ -19,7 +19,7 @@ function Navbar() {
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-r from-blue-600 via-indigo-300 to-purple-700 text-white fixed w-full top-0 left-0 z-50 shadow-lg"
+      className="bg-gradient-to-r from-[#07485E] to-[#CDE1E6] text-white fixed w-full top-0 left-0 z-50 shadow-lg"
     >
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo & Title */}
@@ -28,7 +28,7 @@ function Navbar() {
           className="flex items-center text-2xl font-extrabold hover:scale-105 transition space-x-2"
         >
           <img src={Logo} alt="CCTV Logo" className="w-8 h-8 rounded-md" /> 
-          <span>CCTV Manage</span>
+          <span className="text-white">CCTV Manage</span>
         </button>
 
         {/* Desktop Links */}
@@ -39,15 +39,15 @@ function Navbar() {
               to={link.path}
               className={`relative font-medium text-lg transition ${
                 location.pathname === link.path
-                  ? "text-yellow-300"
-                  : "text-gray-100"
-              } hover:text-yellow-300`}
+                  ? "text-[rgb(205,225,230)]" // yellow highlight when active
+                  : "text-white"
+              } hover:text-[rgb(205,225,230)`}
             >
               {link.name}
               {location.pathname === link.path && (
                 <motion.span
                   layoutId="underline"
-                  className="absolute left-0 -bottom-1 w-full h-[2px] bg-yellow-300 rounded"
+                  className="absolute left-0 -bottom-1 w-full h-[2px] bg-[rgb(50,106,124)] rounded"
                 />
               )}
             </Link>
@@ -70,7 +70,7 @@ function Navbar() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className="md:hidden bg-indigo-800/95 backdrop-blur-md px-6 py-4 space-y-3"
+          className="md:hidden bg-[#07485E]/95 backdrop-blur-md px-6 py-4 space-y-3"
         >
           {navLinks.map((link) => (
             <Link
@@ -79,9 +79,9 @@ function Navbar() {
               onClick={() => setIsOpen(false)}
               className={`block font-medium text-lg ${
                 location.pathname === link.path
-                  ? "text-yellow-300"
-                  : "text-gray-100"
-              } hover:text-yellow-300 transition`}
+                  ? "text-[#FFD700]"
+                  : "text-white"
+              } hover:text-[#FFD700] transition`}
             >
               {link.name}
             </Link>
