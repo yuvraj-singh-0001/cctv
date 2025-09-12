@@ -11,6 +11,7 @@ import {
   ChevronRight,
   User
 } from "lucide-react";
+import Logo from "../assets/logo.png"; // ✅ Import your logo
 
 function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -41,15 +42,18 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-700 flex items-center justify-between">
         {!isCollapsed && (
-          <motion.h1 
+          <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
             onClick={() => setActiveTab("dashboard")}
-            className="text-xl font-bold text-white cursor-pointer hover:text-blue-400"
+            className="flex items-center gap-2 cursor-pointer"
           >
-            MarketPulse360
-          </motion.h1>
+            <img src={Logo} alt="Logo" className="w-8 h-8 rounded" />
+            <h1 className="text-lg font-bold text-white hover:text-blue-400">
+              MarketPulse360
+            </h1>
+          </motion.div>
         )}
 
         <button
