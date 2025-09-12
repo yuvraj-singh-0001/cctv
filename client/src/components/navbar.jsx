@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Menu, X, Camera } from "lucide-react"; // Added Camera icon
+import { Menu, X } from "lucide-react"; 
+import Logo from "../components/logo.png"; // ✅ Correct logo import
 
 function Navbar() {
   const location = useLocation();
@@ -18,15 +19,16 @@ function Navbar() {
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-r from-blue-900 via-indigo-700 to-purple-700 text-white fixed w-full top-0 left-0 z-50 shadow-lg"
+      className="bg-gradient-to-r from-blue-600 via-indigo-300 to-purple-700 text-white fixed w-full top-0 left-0 z-50 shadow-lg"
     >
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+        {/* Logo & Title */}
         <button
           onClick={() => navigate("/login")}
           className="flex items-center text-2xl font-extrabold hover:scale-105 transition space-x-2"
         >
-          <Camera size={28} /> {/* Camera Icon */}
-          <span>CCTV Manage</span> {/* Renamed title */}
+          <img src={Logo} alt="CCTV Logo" className="w-8 h-8 rounded-md" /> 
+          <span>CCTV Manage</span>
         </button>
 
         {/* Desktop Links */}
@@ -52,7 +54,7 @@ function Navbar() {
           ))}
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Toggle */}
         <button
           className="md:hidden text-white focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
@@ -61,6 +63,7 @@ function Navbar() {
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}

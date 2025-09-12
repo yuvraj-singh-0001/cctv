@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Camera } from "lucide-react"; // Import Camera icon
+import Logo from "../components/logo.png"; // logo import 
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -29,7 +29,7 @@ function Login() {
 
       if (res.ok) {
         setMessage("✅ Login successful!");
-        setTimeout(() => navigate("/dashboard"), 1500); // redirect after login
+        setTimeout(() => navigate("/dashboard"), 1500);
       } else {
         setMessage(`❌ ${data.message || "Login failed"}`);
       }
@@ -42,7 +42,7 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+    <div className="flex items-center justify-center min-h-screen bg-gray-200">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -50,8 +50,8 @@ function Login() {
         className="bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-[380px]"
       >
         <h2 className="flex items-center justify-center text-3xl font-bold text-gray-800 mb-6 space-x-2">
-          <Camera size={28} /> {/* Camera Icon */}
-          <span>CCTV Manage</span> {/* New title */}
+          <img src={Logo} alt="CCTV Logo" className="w-10 h-10" />
+          <span>CCTV Manage</span>
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,7 +64,7 @@ function Login() {
             value={form.email}
             onChange={handleChange}
             required
-            className="w-full p-3 border-1 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
           />
 
           <motion.input
@@ -76,7 +76,7 @@ function Login() {
             value={form.password}
             onChange={handleChange}
             required
-            className="w-full p-3 border-1 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-900 focus:outline-none"
           />
 
           <motion.button
