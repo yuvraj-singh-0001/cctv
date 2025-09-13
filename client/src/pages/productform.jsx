@@ -1,9 +1,20 @@
-// src/components/ProductForm.jsx
+// src/pages/productform.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Save, Plus } from 'lucide-react';
+import { 
+  Package, 
+  Save, 
+  X, 
+  DollarSign, 
+  Hash, 
+  Tag, 
+  Camera, 
+  Settings,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
 
-const ProductForm = ({ onClose, onSave }) => {
+const ProductForm = () => {
   const [formData, setFormData] = useState({
     productName: '',
     modelNumber: '',
@@ -17,6 +28,9 @@ const ProductForm = ({ onClose, onSave }) => {
     nightVision: false
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -25,264 +39,366 @@ const ProductForm = ({ onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
-    onClose();
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      
+      // Reset form after success
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setFormData({
+          productName: '',
+          modelNumber: '',
+          brand: '',
+          category: '',
+          price: '',
+          quantity: '',
+          resolution: '',
+          lensSpecification: '',
+          poeSupport: false,
+          nightVision: false
+        });
+      }, 2000);
+    }, 1500);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-      >
+    <div className="w-full">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold" style={{ color: 'rgb(7,72,94)' }}>
-            Add New CCTV Product
-          </h2>
-          <button 
-            onClick={onClose}
-            className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg bg-white shadow-sm">
+              <Package size={24} style={{color: 'rgb(7,72,94)'}} />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold truncate" style={{color: 'rgb(7,72,94)'}}>
+              CCTV Product Form
+            </h1>
+          </div>
+          <p className="text-gray-600 ml-12">
+            Fill in the product details to add to your inventory
+          </p>
+        </motion.div>
+
+        {/* Success Message */}
+        {submitSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3"
           >
-            <X size={24} style={{ color: 'rgb(7,72,94)' }} />
-          </button>
-        </div>
+            <CheckCircle size={20} className="text-green-600" />
+            <span className="text-green-800 font-medium">Product added successfully!</span>
+          </motion.div>
+        )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Information Section */}
-          <div>
-            <h3 className="text-lg font-medium mb-4" style={{ color: 'rgb(7,72,94)' }}>
-              Basic Information
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name *
-                </label>
-                <input
-                  type="text"
-                  name="productName"
-                  value={formData.productName}
-                  onChange={handleChange}
-                  placeholder="e.g., HIKVISION 2MP"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Model Number *
-                </label>
-                <input
-                  type="text"
-                  name="modelNumber"
-                  value={formData.modelNumber}
-                  onChange={handleChange}
-                  placeholder="e.g., DS-2CD2342WD-I"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+        {/* Form Container */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-xl shadow-lg overflow-hidden"
+        >
+          {/* Form Header with Save Button */}
+          <div className="px-6 py-4 border-b flex justify-between items-center" style={{backgroundColor: '#CDE1E6'}}>
+            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+              Product Information
+            </h2>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({
+                    productName: '',
+                    modelNumber: '',
+                    brand: '',
+                    category: '',
+                    price: '',
+                    quantity: '',
+                    resolution: '',
+                    lensSpecification: '',
+                    poeSupport: false,
+                    nightVision: false
+                  });
+                }}
+                className="px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2"
+                style={{
+                  backgroundColor: 'white',
+                  color: 'rgb(7,72,94)',
+                  border: '2px solid rgb(7,72,94)'
+                }}
+              >
+                <X size={16} />
+                Clear
+              </button>
+              <button
+                type="submit"
+                form="product-form"
+                disabled={isSubmitting}
+                className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 transition-all hover:shadow-lg"
+                style={{
+                  backgroundColor: 'rgb(7,72,94)',
+                  color: 'white',
+                  border: '2px solid rgb(7,72,94)'
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    Save
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
-          <hr className="border-gray-200" />
-
-          {/* Brand and Category Section */}
-          <div>
-            <h3 className="text-lg font-medium mb-4" style={{ color: 'rgb(7,72,94)' }}>
-              Brand & Category
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Brand *
-                </label>
-                <select
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  <option value="">Select Brand</option>
-                  <option value="Hikvision">Hikvision</option>
-                  <option value="Dahua">Dahua</option>
-                  <option value="CP Plus">CP Plus</option>
-                  <option value="Bosch">Bosch</option>
-                  <option value="Axis">Axis</option>
-                  <option value="Other">Other</option>
-                </select>
+          {/* Form */}
+          <form id="product-form" onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Basic Information Section */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Package size={20} style={{color: 'rgb(7,72,94)'}} />
+                <h3 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+                  Basic Information
+                </h3>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category *
-                </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option value="Dome">Dome</option>
-                  <option value="Bullet">Bullet</option>
-                  <option value="PTZ">PTZ</option>
-                  <option value="Box">Box</option>
-                  <option value="C-Mount">C-Mount</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <hr className="border-gray-200" />
-
-          {/* Pricing & Inventory Section */}
-          <div>
-            <h3 className="text-lg font-medium mb-4" style={{ color: 'rgb(7,72,94)' }}>
-              Pricing & Inventory
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price ($) *
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-3 text-gray-500">$</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Product Name *
+                  </label>
                   <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
+                    type="text"
+                    name="productName"
+                    value={formData.productName}
                     onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    placeholder="0.00"
-                    className="w-full pl-8 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., HIKVISION 2MP Dome Camera"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Model Number *
+                  </label>
+                  <input
+                    type="text"
+                    name="modelNumber"
+                    value={formData.modelNumber}
+                    onChange={handleChange}
+                    placeholder="e.g., DS-2CD2342WD-I"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
                     required
                   />
                 </div>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quantity in Stock *
-                </label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  min="0"
-                  placeholder="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
             </div>
-          </div>
 
-          <hr className="border-gray-200" />
-
-          {/* Technical Specifications Section */}
-          <div>
-            <h3 className="text-lg font-medium mb-4" style={{ color: 'rgb(7,72,94)' }}>
-              Technical Specifications
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Resolution
-                </label>
-                <select
-                  name="resolution"
-                  value={formData.resolution}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select Resolution</option>
-                  <option value="720p">720p</option>
-                  <option value="1080p">1080p (Full HD)</option>
-                  <option value="2MP">2MP</option>
-                  <option value="4MP">4MP</option>
-                  <option value="5MP">5MP</option>
-                  <option value="4K">4K (8MP)</option>
-                  <option value="Other">Other</option>
-                </select>
+            <div className="border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Tag size={20} style={{color: 'rgb(7,72,94)'}} />
+                <h3 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+                  Brand & Category
+                </h3>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Lens Specification
-                </label>
-                <input
-                  type="text"
-                  name="lensSpecification"
-                  value={formData.lensSpecification}
-                  onChange={handleChange}
-                  placeholder="e.g., 2.8mm, varifocal"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Brand *
+                  </label>
+                  <select
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                    required
+                  >
+                    <option value="">Select Brand</option>
+                    <option value="Hikvision">Hikvision</option>
+                    <option value="Dahua">Dahua</option>
+                    <option value="CP Plus">CP Plus</option>
+                    <option value="Bosch">Bosch</option>
+                    <option value="Axis">Axis</option>
+                    <option value="FLIR">FLIR</option>
+                    <option value="Reolink">Reolink</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Category *
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Dome">Dome Camera</option>
+                    <option value="Bullet">Bullet Camera</option>
+                    <option value="PTZ">PTZ Camera</option>
+                    <option value="Recording">Recording Equipment</option>
+                    <option value="Sensors">Sensors</option>
+                    <option value="Access Control">Access Control</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
               </div>
             </div>
-            
-            <div className="mt-4 space-y-3">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="poeSupport"
-                  checked={formData.poeSupport}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <span className="ml-2 text-gray-700">Power over Ethernet (PoE) Support</span>
-              </label>
-              
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="nightVision"
-                  checked={formData.nightVision}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <span className="ml-2 text-gray-700">Night Vision Capability</span>
-              </label>
-            </div>
-          </div>
 
-          {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-              style={{ backgroundColor: 'rgb(7,72,94)' }}
-            >
-              <Save size={18} className="mr-2" />
-              Save Product
-            </button>
-          </div>
-        </form>
-      </motion.div>
+            <div className="border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <DollarSign size={20} style={{color: 'rgb(7,72,94)'}} />
+                <h3 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+                  Pricing & Inventory
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Price (₹) *
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-3 text-gray-500">₹</span>
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full pl-8 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                      style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Quantity in Stock *
+                  </label>
+                  <div className="relative">
+                    <Hash size={16} className="absolute left-3 top-3.5 text-gray-500" />
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={formData.quantity}
+                      onChange={handleChange}
+                      min="0"
+                      placeholder="0"
+                      className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                      style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Settings size={20} style={{color: 'rgb(7,72,94)'}} />
+                <h3 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+                  Technical Specifications
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Resolution
+                  </label>
+                  <select
+                    name="resolution"
+                    value={formData.resolution}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                  >
+                    <option value="">Select Resolution</option>
+                    <option value="720p">720p</option>
+                    <option value="1080p">1080p (Full HD)</option>
+                    <option value="2MP">2MP</option>
+                    <option value="4MP">4MP</option>
+                    <option value="5MP">5MP</option>
+                    <option value="4K">4K (8MP)</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
+                    Lens Specification
+                  </label>
+                  <input
+                    type="text"
+                    name="lensSpecification"
+                    value={formData.lensSpecification}
+                    onChange={handleChange}
+                    placeholder="e.g., 2.8mm, varifocal"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="poeSupport"
+                    checked={formData.poeSupport}
+                    onChange={handleChange}
+                    className="h-4 w-4 rounded border-gray-300"
+                    style={{accentColor: 'rgb(7,72,94)'}}
+                  />
+                  <span className="ml-3 text-gray-700 font-medium">Power over Ethernet (PoE) Support</span>
+                </label>
+                
+                <label className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="nightVision"
+                    checked={formData.nightVision}
+                    onChange={handleChange}
+                    className="h-4 w-4 rounded border-gray-300"
+                    style={{accentColor: 'rgb(7,72,94)'}}
+                  />
+                  <span className="ml-3 text-gray-700 font-medium">Night Vision Capability</span>
+                </label>
+              </div>
+            </div>
+
+          </form>
+        </motion.div>
+      </div>
     </div>
   );
 };
