@@ -1,6 +1,5 @@
 // src/pages/dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PlusCircle, 
@@ -11,8 +10,6 @@ import {
   TrendingUp,
   AlertCircle,
   Clock,
-  Menu,
-  X,
   Search,
   Filter,
   Download,
@@ -20,9 +17,6 @@ import {
 } from 'lucide-react';
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -31,36 +25,7 @@ function Dashboard() {
     lowStockItems: 0,
     todayProducts: 0
   });
-  const [screenSize, setScreenSize] = useState('');
-
-  // Handle responsive behavior
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      
-      if (width < 640) {
-        setScreenSize('xs');
-        setIsCollapsed(true);
-      } else if (width < 768) {
-        setScreenSize('sm');
-        setIsCollapsed(true);
-      } else if (width < 1024) {
-        setScreenSize('md');
-        setIsCollapsed(false);
-      } else if (width < 1280) {
-        setScreenSize('lg');
-        setIsCollapsed(false);
-      } else {
-        setScreenSize('xl');
-        setIsCollapsed(false);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [screenSize, setScreenSize] = useState('lg');
 
   // Load product data
   useEffect(() => {
@@ -178,10 +143,6 @@ function Dashboard() {
     return dateString;
   };
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   // Animation variants
   const containerVariants = {
@@ -224,8 +185,7 @@ function Dashboard() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="flex h-screen items-center justify-center" 
-        style={{backgroundColor: 'rgb(205,225,230)'}}
+        className="flex h-64 items-center justify-center"
       >
         <div className="text-center">
           <motion.div
@@ -249,44 +209,23 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen relative" style={{backgroundColor: 'rgb(205,225,230)'}}>
-      {/* Mobile menu button */}
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md"
-        onClick={toggleMobileMenu}
-        style={{ color: 'rgb(7,72,94)' }}
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </motion.button>
-
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        isCollapsed={isCollapsed} 
-        setIsCollapsed={setIsCollapsed}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-        screenSize={screenSize}
-      />
-      
-      <motion.main 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className={`flex-1 ${isCollapsed ? 'md:ml-20' : 'md:ml-64'} transition-all duration-300 p-3 sm:p-4 md:p-6 overflow-auto`}
-      >
-        {/* Header Section */}
-        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-xl sm:text-2xl font-bold truncate" 
-            style={{color: 'rgb(7,72,94)'}}
-          >
-            CCTV Inventory Dashboard
-          </motion.h1>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      {/* Header Section */}
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-xl sm:text-2xl font-bold truncate" 
+          style={{color: 'rgb(7,72,94)'}}
+        >
+          CCTV Inventory Dashboard
+        </motion.h1>
           
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <motion.div 
@@ -627,8 +566,7 @@ function Dashboard() {
             <span className="hidden sm:inline">Powered by CodeScripts</span>
           </div>
         </motion.div>
-      </motion.main>
-    </div>
+    </motion.div>
   );
 }
 
