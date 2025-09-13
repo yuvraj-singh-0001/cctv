@@ -7,14 +7,13 @@ function UserManagement() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Load users
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/users"); // correct backend route
+      const res = await fetch("http://localhost:5000/api/auth/users");
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-      setUsers(data.users); // backend returns { success: true, users: [...] }
+      setUsers(data.users);
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]);
@@ -27,13 +26,10 @@ function UserManagement() {
     fetchUsers();
   }, []);
 
-  // ✅ Delete User
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`Failed to delete user. Status: ${res.status}`);
       setUsers(users.filter((u) => u.id !== id));
     } catch (error) {
@@ -41,7 +37,6 @@ function UserManagement() {
     }
   };
 
-  // ✅ Edit User
   const handleEdit = async (id, oldName, oldEmail) => {
     const newName = prompt("Enter new name:", oldName);
     const newEmail = prompt("Enter new email:", oldEmail);
@@ -60,12 +55,13 @@ function UserManagement() {
     }
   };
 
-  // ✅ Loading state
   if (isLoading) {
     return (
-      <div className="flex h-full justify-center items-center">
-        <RefreshCw className="animate-spin text-blue-600" size={28} />
-        <span className="ml-2">Loading users...</span>
+      <div className="flex h-full justify-center items-center space-x-2">
+        <RefreshCw className="animate-spin" size={28} style={{ color: "rgb(7,72,94)" }} />
+        <span className="text-lg font-medium" style={{ color: "rgb(7,72,94)" }}>
+          Loading users...
+        </span>
       </div>
     );
   }
@@ -75,20 +71,29 @@ function UserManagement() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="p-6 bg-white shadow-md rounded-lg"
+      className="p-6 rounded-xl w-full max-w-6xl mx-auto"
+      style={{ backgroundColor: "rgb(205,225,230)" }}
     >
-      <h2 className="text-xl font-bold mb-4 text-blue-900">User Management</h2>
+      <h2
+        className="text-2xl font-bold mb-6 border-b pb-2"
+        style={{ color: "rgb(7,72,94)", borderColor: "rgb(7,72,94)" }}
+      >
+        User Management
+      </h2>
+
       {users.length === 0 ? (
-        <p className="text-gray-500">No users found</p>
+        <p className="text-center py-6" style={{ color: "rgb(7,72,94)" }}>
+          No users found
+        </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg">
-            <thead className="bg-blue-100">
-              <tr>
-                <th className="px-4 py-2 text-left">ID</th>
-                <th className="px-4 py-2 text-left">Name</th>
-                <th className="px-4 py-2 text-left">Email</th>
-                <th className="px-4 py-2 text-left">Actions</th>
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}>
+                <th className="px-6 py-3 text-left font-medium">ID</th>
+                <th className="px-6 py-3 text-left font-medium">Name</th>
+                <th className="px-6 py-3 text-left font-medium">Email</th>
+                <th className="px-6 py-3 text-left font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -97,24 +102,30 @@ function UserManagement() {
                   key={u.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="border-b hover:bg-blue-50"
+                  transition={{ delay: index * 0.08 }}
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "white" : "rgb(205,225,230)",
+                    color: "rgb(7,72,94)",
+                  }}
+                  className="hover:bg-blue-100"
                 >
-                  <td className="px-4 py-2">{u.id}</td>
-                  <td className="px-4 py-2">{u.name}</td>
-                  <td className="px-4 py-2">{u.email}</td>
-                  <td className="px-4 py-2 flex gap-3">
+                  <td className="px-6 py-3">{u.id}</td>
+                  <td className="px-6 py-3 font-medium">{u.name}</td>
+                  <td className="px-6 py-3">{u.email}</td>
+                  <td className="px-6 py-3 flex gap-3">
                     <button
-                      className="text-green-600 hover:text-green-800"
+                      className="flex items-center px-3 py-1 rounded-lg hover:opacity-80 transition"
+                      style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
                       onClick={() => handleEdit(u.id, u.name, u.email)}
                     >
-                      <Edit size={18} />
+                      <Edit size={16} className="mr-1" /> Edit
                     </button>
                     <button
-                      className="text-red-600 hover:text-red-800"
+                      className="flex items-center px-3 py-1 rounded-lg hover:opacity-80 transition"
+                      style={{ backgroundColor: "#ff4d4d", color: "white" }}
                       onClick={() => handleDelete(u.id)}
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} className="mr-1" /> Delete
                     </button>
                   </td>
                 </motion.tr>
