@@ -10,18 +10,18 @@ import {
   X,
   Menu
 } from 'lucide-react';
-
-// Import the logo - make sure the path is correct
+import { useNavigate } from "react-router-dom"; // ✅ import navigation hook
 import Logo from "./logo.png";
 
 function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
-  
+  const navigate = useNavigate(); // ✅ router navigation
+
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'add-product', label: 'Add Product', icon: PlusCircle },
-    { id: 'user-management', label: 'User Management', icon: Users },
-    { id: 'product-list', label: 'Product List', icon: List },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { id: 'productform', label: 'Add Product', icon: PlusCircle, path: '/productform' }, // ✅ fixed id + path
+    { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
+    { id: 'product-list', label: 'Product List', icon: List, path: '/product-list' },
   ];
 
   const toggleSidebar = () => {
@@ -66,21 +66,12 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
           >
             {(!isCollapsed || isMobileOpen) ? (
               <div className="flex items-center">
-                <img 
-                  src={Logo} 
-                  alt="CCTV Manager Logo" 
-                  className="w-8 h-8 mr-2 object-contain"
-                />
+                <img src={Logo} alt="CCTV Manager Logo" className="w-8 h-8 mr-2 object-contain" />
                 <h1 className="text-xl font-bold" style={{color: 'rgb(7,72,94)'}}>CCTV Manager</h1>
               </div>
             ) : (
-              // Show just the logo when collapsed
               <div className="flex justify-center w-full">
-                <img 
-                  src={Logo} 
-                  alt="CCTV Manager Logo" 
-                  className="w-8 h-8 object-contain"
-                />
+                <img src={Logo} alt="CCTV Manager Logo" className="w-8 h-8 object-contain" />
               </div>
             )}
             <div className="flex items-center">
@@ -89,68 +80,37 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
                 className="p-1 rounded-full hover:bg-gray-100"
                 style={{color: 'rgb(7,72,94)'}}
               >
-                {isMobileOpen ? (
-                  <X size={20} />
-                ) : isCollapsed ? (
-                  <ChevronRight size={20} />
-                ) : (
-                  <ChevronLeft size={20} />
-                )}
+                {isMobileOpen ? <X size={20} /> : isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </button>
             </div>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 overflow-y-auto">
-            <div className="mb-6">
-              <h2 
-                className={`font-semibold uppercase text-sm mb-2 ${(isCollapsed && !isMobileOpen) ? 'text-center' : ''}`}
-                style={{color: 'rgb(7,72,94)'}}
-              >
-                {(isCollapsed && !isMobileOpen) ? 'Biz' : 'Businesses'}
-              </h2>
-              <ul className="space-y-1">
-                {menuItems.slice(1).map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.id}>
-                      <button
-                        onClick={() => {
-                          setActiveTab(item.id);
-                          if (window.innerWidth < 768) setIsMobileOpen(false);
-                        }}
-                        className={`w-full flex items-center rounded-lg p-3 transition-colors ${activeTab === item.id ? 'font-semibold' : 'hover:bg-gray-100'}`}
-                        style={{
-                          backgroundColor: activeTab === item.id ? 'rgb(205,225,230)' : 'transparent',
-                          color: 'rgb(7,72,94)'
-                        }}
-                      >
-                        <Icon size={20} />
-                        {(!isCollapsed || isMobileOpen) && <span className="ml-3">{item.label}</span>}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            {/* Dashboard item separately */}
-            <div>
-              <button
-                onClick={() => {
-                  setActiveTab('dashboard');
-                  if (window.innerWidth < 768) setIsMobileOpen(false);
-                }}
-                className={`w-full flex items-center rounded-lg p-3 transition-colors ${activeTab === 'dashboard' ? 'font-semibold' : 'hover:bg-gray-100'}`}
-                style={{
-                  backgroundColor: activeTab === 'dashboard' ? 'rgb(205,225,230)' : 'transparent',
-                  color: 'rgb(7,72,94)'
-                }}
-              >
-                <LayoutDashboard size={20} />
-                {(!isCollapsed || isMobileOpen) && <span className="ml-3">Dashboard</span>}
-              </button>
-            </div>
+            <ul className="space-y-1">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        navigate(item.path); // ✅ navigate to page
+                        if (window.innerWidth < 768) setIsMobileOpen(false);
+                      }}
+                      className={`w-full flex items-center rounded-lg p-3 transition-colors ${activeTab === item.id ? 'font-semibold' : 'hover:bg-gray-100'}`}
+                      style={{
+                        backgroundColor: activeTab === item.id ? 'rgb(205,225,230)' : 'transparent',
+                        color: 'rgb(7,72,94)'
+                      }}
+                    >
+                      <Icon size={20} />
+                      {(!isCollapsed || isMobileOpen) && <span className="ml-3">{item.label}</span>}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
         </div>
       </div>
