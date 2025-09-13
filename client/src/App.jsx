@@ -5,7 +5,8 @@ import Navbar from "./components/navbar.jsx";
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
 import Dashboard from "./pages/dashboard.jsx"; 
-import ProductForm from "./pages/productform.jsx"; // ✅ import it
+import ProductForm from "./pages/productform.jsx"; 
+import UserManagement from "./pages/UserManagement.jsx"; // ✅ import
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Route path="/register" element={<><Navbar /><Register /></>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/productform" element={<ProductForm onClose={() => {}} onSave={() => {}} />} /> 
-        {/* ✅ add this route */}
+        <Route path="/user-management" element={<UserManagement />} /> {/* ✅ added */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
