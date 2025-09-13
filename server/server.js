@@ -4,6 +4,9 @@ const cors = require('cors');   // <-- add this
 const routes = require('./src/routes/router');
 
 dotenv.config();
+
+// Initialize database tables
+require('./src/api/config/createTables');
 const app = express();
 const PORT = process.env.PORT || 5000;
 

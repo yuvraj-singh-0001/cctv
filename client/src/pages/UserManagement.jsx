@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Edit, Trash2, RefreshCw, Users, Plus, Search, Filter } from "lucide-react";
+import EditUserModal from "../components/EditUserModal";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -37,22 +40,33 @@ function UserManagement() {
     }
   };
 
-  const handleEdit = async (id, oldName, oldEmail) => {
-    const newName = prompt("Enter new name:", oldName);
-    const newEmail = prompt("Enter new email:", oldEmail);
-    if (!newName || !newEmail || (newName === oldName && newEmail === oldEmail)) return;
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setEditModalOpen(true);
+  };
 
+  const handleEditSave = async (id, updateData) => {
     try {
       const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName, email: newEmail }),
+        body: JSON.stringify(updateData),
       });
       if (!res.ok) throw new Error(`Failed to update user. Status: ${res.status}`);
-      setUsers(users.map((u) => (u.id === id ? { ...u, name: newName, email: newEmail } : u)));
+      
+      // Update the user in the local state
+      setUsers(users.map((u) => (u.id === id ? { ...u, name: updateData.name, email: updateData.email } : u)));
+      setEditModalOpen(false);
+      setSelectedUser(null);
     } catch (error) {
       console.error("Error editing user:", error);
+      throw error;
     }
+  };
+
+  const handleModalClose = () => {
+    setEditModalOpen(false);
+    setSelectedUser(null);
   };
 
   if (isLoading) {
@@ -230,7 +244,7 @@ function UserManagement() {
                       <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm font-medium">
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleEdit(user.id, user.name, user.email)}
+                            onClick={() => handleEditClick(user)}
                             className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
                             style={{ backgroundColor: 'rgb(7,72,94)', color: 'white' }}
                           >
@@ -254,6 +268,14 @@ function UserManagement() {
           </div>
         )}
       </motion.div>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={editModalOpen}
+        onClose={handleModalClose}
+        user={selectedUser}
+        onSave={handleEditSave}
+      />
     </motion.div>
   );
 }

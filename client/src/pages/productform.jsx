@@ -43,28 +43,46 @@ const ProductForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/api/products/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitSuccess(true);
+        
+        // Reset form after success
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setFormData({
+            productName: '',
+            modelNumber: '',
+            brand: '',
+            category: '',
+            price: '',
+            quantity: '',
+            resolution: '',
+            lensSpecification: '',
+            poeSupport: false,
+            nightVision: false
+          });
+        }, 2000);
+      } else {
+        console.error('Error adding product:', data.message);
+        alert('Error adding product: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Error submitting form. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitSuccess(true);
-      
-      // Reset form after success
-      setTimeout(() => {
-        setSubmitSuccess(false);
-        setFormData({
-          productName: '',
-          modelNumber: '',
-          brand: '',
-          category: '',
-          price: '',
-          quantity: '',
-          resolution: '',
-          lensSpecification: '',
-          poeSupport: false,
-          nightVision: false
-        });
-      }, 2000);
-    }, 1500);
+    }
   };
 
   return (

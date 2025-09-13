@@ -29,83 +29,56 @@ function Dashboard() {
 
   // Load product data
   useEffect(() => {
-    const loadProductData = () => {
+    const loadProductData = async () => {
       setIsLoading(true);
       try {
-        // Mock data based on the screenshot
-        const mockProducts = [
-          { 
-            id: 1, 
-            name: 'CCTV Camera', 
-            brand: 'CP Plus', 
-            category: 'PTZ', 
-            price: 150.00, 
-            stock: 100, 
-            addedTime: '3/9/2025 at 2:30:08 pm',
-            status: 'In Stock'
-          },
-          { 
-            id: 2, 
-            name: 'DVR System', 
-            brand: 'Hikvision', 
-            category: 'Recording', 
-            price: 80.00, 
-            stock: 50, 
-            addedTime: '3/9/2025 at 1:15:22 pm',
-            status: 'In Stock'
-          },
-          { 
-            id: 3, 
-            name: 'Camera Dome', 
-            brand: 'Dahua', 
-            category: 'Dome', 
-            price: 450.00, 
-            stock: 3, 
-            addedTime: '2/9/2025 at 11:45:10 am',
-            status: 'Low Stock'
-          },
-          { 
-            id: 4, 
-            name: 'NVR System', 
-            brand: 'Hikvision', 
-            category: 'Recording', 
-            price: 120.00, 
-            stock: 25, 
-            addedTime: '1/9/2025 at 4:20:35 pm',
-            status: 'In Stock'
-          },
-          { 
-            id: 5, 
-            name: 'IP Camera', 
-            brand: 'CP Plus', 
-            category: 'Bullet', 
-            price: 659.00, 
-            stock: 75, 
-            addedTime: '31/8/2025 at 9:10:45 am',
-            status: 'In Stock'
-          }
-        ];
-
-        setProducts(mockProducts);
+        // Fetch products from API
+        const response = await fetch('http://localhost:5000/api/products');
+        const data = await response.json();
         
-        // Calculate stats
-        const totalProducts = mockProducts.length;
-        const inventoryValue = mockProducts.reduce((total, product) => 
-          total + (product.price * product.stock), 0);
-        const lowStockItems = mockProducts.filter(product => product.stock < 5).length;
-        const today = new Date();
-        const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-        const todayProducts = mockProducts.filter(product => 
-          product.addedTime.includes(todayFormatted.split('/')[0])).length;
-        
-        setStats({
-          totalProducts,
-          inventoryValue,
-          lowStockItems,
-          todayProducts
-        });
+        if (data.success) {
+          const fetchedProducts = data.products;
+          setProducts(fetchedProducts);
+          
+          // Calculate stats
+          const totalProducts = fetchedProducts.length;
+          const inventoryValue = fetchedProducts.reduce((total, product) => 
+            total + (product.price * product.stock), 0);
+          const lowStockItems = fetchedProducts.filter(product => product.stock < 5).length;
+          
+          // Get today's products
+          const today = new Date();
+          const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+          const todayProducts = fetchedProducts.filter(product => 
+            product.addedTime.includes(todayFormatted)).length;
+          
+          setStats({
+            totalProducts,
+            inventoryValue,
+            lowStockItems,
+            todayProducts
+          });
+        } else {
+          console.error('Error fetching products:', data.message);
+          // Fallback to empty state
+          setProducts([]);
+          setStats({
+            totalProducts: 0,
+            inventoryValue: 0,
+            lowStockItems: 0,
+            todayProducts: 0
+          });
+        }
       } catch (error) {
         console.error('Error loading product data:', error);
+        // Fallback to empty state
+        setProducts([]);
+        setStats({
+          totalProducts: 0,
+          inventoryValue: 0,
+          lowStockItems: 0,
+          todayProducts: 0
+        });
       } finally {
         setIsLoading(false);
       }
@@ -115,12 +88,41 @@ function Dashboard() {
   }, []);
 
   // Refresh data
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsLoading(true);
-    // Simulate refresh delay
-    setTimeout(() => {
+    try {
+      // Fetch products from API
+      const response = await fetch('http://localhost:5000/api/products');
+      const data = await response.json();
+      
+      if (data.success) {
+        const fetchedProducts = data.products;
+        setProducts(fetchedProducts);
+        
+        // Calculate stats
+        const totalProducts = fetchedProducts.length;
+        const inventoryValue = fetchedProducts.reduce((total, product) => 
+          total + (product.price * product.stock), 0);
+        const lowStockItems = fetchedProducts.filter(product => product.stock < 5).length;
+        
+        // Get today's products
+        const today = new Date();
+        const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+        const todayProducts = fetchedProducts.filter(product => 
+          product.addedTime.includes(todayFormatted)).length;
+        
+        setStats({
+          totalProducts,
+          inventoryValue,
+          lowStockItems,
+          todayProducts
+        });
+      }
+    } catch (error) {
+      console.error('Error refreshing product data:', error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   // Format currency
