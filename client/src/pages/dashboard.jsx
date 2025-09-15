@@ -324,9 +324,9 @@ function Dashboard() {
               >
                 <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" style={{color: 'rgb(7,72,94)'}} />
               </motion.div>
-              <div className="ml-2 sm:ml-3 md:ml-4">
+              <div className="ml-2 sm:ml-3 md:ml-4 flex-1 min-w-0">
                 <h2 className="text-gray-500 text-xs sm:text-sm">Inventory Value</h2>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold" style={{color: 'rgb(7,72,94)'}}>
+                <p className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold break-words" style={{color: 'rgb(7,72,94)'}}>
                   {formatCurrency(stats.inventoryValue)}
                 </p>
               </div>
