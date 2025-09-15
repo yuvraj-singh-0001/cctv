@@ -8,7 +8,8 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  Menu
+  Menu,
+  LogOut
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom"; // ✅ import navigation hook
 import Logo from "./logo.png";
@@ -30,6 +31,16 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
     } else {
       setIsCollapsed(!isCollapsed);
     }
+  };
+
+  const handleLogout = () => {
+    // Clear any stored authentication data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+    
+    // Navigate to login page
+    navigate('/login');
   };
 
   return (
@@ -86,8 +97,8 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 overflow-y-auto">
-            <ul className="space-y-1">
+          <nav className="flex-1 p-4 overflow-y-auto flex flex-col">
+            <ul className="space-y-1 flex-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -111,6 +122,19 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
                 );
               })}
             </ul>
+            
+            {/* Logout Button */}
+            <div className="mt-4 pt-4 border-t" style={{borderColor: 'rgba(7,72,94,0.2)'}}>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center rounded-lg p-3 transition-colors hover:text-red-400 hover:bg-red-400"
+                style={{color: 'rgb(7,72,94)'}}
+                title="Logout"
+              >
+                <LogOut size={20} />
+                {(!isCollapsed || isMobileOpen) && <span className="ml-3">Logout</span>}
+              </button>
+            </div>
           </nav>
         </div>
       </div>
