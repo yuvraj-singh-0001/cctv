@@ -1,6 +1,52 @@
 const pool = require("../../api/config/db");
 const bcrypt = require("bcryptjs");
 
+// 📌 Add new user
+const addUser = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Name, email, and password are required" 
+    });
+  }
+
+  try {
+    // Check if user already exists
+    const [existingUser] = await pool.promise().query(
+      "SELECT id FROM users WHERE email = ?", 
+      [email]
+    );
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "User with this email already exists" 
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert new user
+    const [result] = await pool.promise().query(
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+      [name, email, hashedPassword]
+    );
+
+    res.status(201).json({ 
+      success: true, 
+      message: "✅ User added successfully",
+      userId: result.insertId
+    });
+  } catch (err) {
+    console.error("❌ Add user error:", err.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // 📌 Get all users
 const getUsers = async (req, res) => {
   try {
@@ -61,4 +107,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, updateUser, deleteUser };
+module.exports = { addUser, getUsers, updateUser, deleteUser };

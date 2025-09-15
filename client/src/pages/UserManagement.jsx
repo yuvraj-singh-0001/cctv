@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Edit, Trash2, RefreshCw, Users, Plus, Search, Filter } from "lucide-react";
 import EditUserModal from "../components/EditUserModal";
+import AddUserModal from "../components/AddUserModal";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async () => {
@@ -64,9 +66,35 @@ function UserManagement() {
     }
   };
 
+  const handleAddUser = async (userData) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/users/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Failed to add user. Status: ${res.status}`);
+      }
+      
+      // Refresh users list to show the new user
+      await fetchUsers();
+      setAddModalOpen(false);
+    } catch (error) {
+      console.error("Error adding user:", error);
+      throw error;
+    }
+  };
+
   const handleModalClose = () => {
     setEditModalOpen(false);
     setSelectedUser(null);
+  };
+
+  const handleAddModalClose = () => {
+    setAddModalOpen(false);
   };
 
   if (isLoading) {
@@ -112,6 +140,7 @@ function UserManagement() {
           className="flex gap-2 sm:gap-3"
         >
           <button 
+            onClick={() => setAddModalOpen(true)}
             className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 text-sm sm:text-base"
             style={{
               backgroundColor: 'rgb(7,72,94)',
@@ -275,6 +304,13 @@ function UserManagement() {
         onClose={handleModalClose}
         user={selectedUser}
         onSave={handleEditSave}
+      />
+
+      {/* Add User Modal */}
+      <AddUserModal
+        isOpen={addModalOpen}
+        onClose={handleAddModalClose}
+        onSave={handleAddUser}
       />
     </motion.div>
   );
