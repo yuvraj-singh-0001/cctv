@@ -18,6 +18,7 @@ import {
 
 function Dashboard() {
   const [products, setProducts] = useState([]);
+  const [todayProducts, setTodayProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalProducts: 0,
@@ -27,76 +28,21 @@ function Dashboard() {
   });
   const [screenSize, setScreenSize] = useState('lg');
 
-  // Load product data
-  useEffect(() => {
-    const loadProductData = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch products from API
-        const response = await fetch('http://localhost:5000/api/products');
-        const data = await response.json();
-        
-        if (data.success) {
-          const fetchedProducts = data.products;
-          setProducts(fetchedProducts);
-          
-          // Calculate stats
-          const totalProducts = fetchedProducts.length;
-          const inventoryValue = fetchedProducts.reduce((total, product) => 
-            total + (product.price * product.stock), 0);
-          const lowStockItems = fetchedProducts.filter(product => product.stock < 5).length;
-          
-          // Get today's products
-          const today = new Date();
-          const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-          const todayProducts = fetchedProducts.filter(product => 
-            product.addedTime.includes(todayFormatted)).length;
-          
-          setStats({
-            totalProducts,
-            inventoryValue,
-            lowStockItems,
-            todayProducts
-          });
-        } else {
-          console.error('Error fetching products:', data.message);
-          // Fallback to empty state
-          setProducts([]);
-          setStats({
-            totalProducts: 0,
-            inventoryValue: 0,
-            lowStockItems: 0,
-            todayProducts: 0
-          });
-        }
-      } catch (error) {
-        console.error('Error loading product data:', error);
-        // Fallback to empty state
-        setProducts([]);
-        setStats({
-          totalProducts: 0,
-          inventoryValue: 0,
-          lowStockItems: 0,
-          todayProducts: 0
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProductData();
-  }, []);
-
-  // Refresh data
-  const handleRefresh = async () => {
+  // Load product data function
+  const loadProductData = async () => {
     setIsLoading(true);
     try {
-      // Fetch products from API
-      const response = await fetch('http://localhost:5000/api/products');
-      const data = await response.json();
+      // Fetch all products and today's products in parallel
+      const [allProductsResponse, todayProductsResponse] = await Promise.all([
+        fetch('http://localhost:5000/api/products'),
+        fetch('http://localhost:5000/api/products/today')
+      ]);
       
-      if (data.success) {
-        const fetchedProducts = data.products;
+      const allProductsData = await allProductsResponse.json();
+      const todayProductsData = await todayProductsResponse.json();
+      
+      if (allProductsData.success) {
+        const fetchedProducts = allProductsData.products;
         setProducts(fetchedProducts);
         
         // Calculate stats
@@ -105,24 +51,69 @@ function Dashboard() {
           total + (product.price * product.stock), 0);
         const lowStockItems = fetchedProducts.filter(product => product.stock < 5).length;
         
-        // Get today's products
-        const today = new Date();
-        const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-        const todayProducts = fetchedProducts.filter(product => 
-          product.addedTime.includes(todayFormatted)).length;
+        // Set today's products from dedicated API
+        let todayProductsCount = 0;
+        if (todayProductsData.success) {
+          setTodayProducts(todayProductsData.products);
+          todayProductsCount = todayProductsData.products.length;
+        } else {
+          setTodayProducts([]);
+        }
         
         setStats({
           totalProducts,
           inventoryValue,
           lowStockItems,
-          todayProducts
+          todayProducts: todayProductsCount
+        });
+      } else {
+        console.error('Error fetching products:', allProductsData.message);
+        // Fallback to empty state
+        setProducts([]);
+        setTodayProducts([]);
+        setStats({
+          totalProducts: 0,
+          inventoryValue: 0,
+          lowStockItems: 0,
+          todayProducts: 0
         });
       }
     } catch (error) {
-      console.error('Error refreshing product data:', error);
+      console.error('Error loading product data:', error);
+      // Fallback to empty state
+      setProducts([]);
+      setTodayProducts([]);
+      setStats({
+        totalProducts: 0,
+        inventoryValue: 0,
+        lowStockItems: 0,
+        todayProducts: 0
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Load product data on component mount and listen for product additions
+  useEffect(() => {
+    loadProductData();
+
+    // Listen for product addition events
+    const handleProductAdded = () => {
+      loadProductData();
+    };
+
+    window.addEventListener('productAdded', handleProductAdded);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('productAdded', handleProductAdded);
+    };
+  }, []);
+
+  // Refresh data
+  const handleRefresh = () => {
+    loadProductData();
   };
 
   // Format currency
@@ -438,11 +429,7 @@ function Dashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {products.filter(product => {
-                        const today = new Date();
-                        const todayFormatted = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-                        return product.addedTime.includes(todayFormatted.split('/')[0]);
-                      }).map((product, index) => (
+                      {todayProducts.map((product, index) => (
                         <motion.tr 
                           key={product.id}
                           variants={tableRowVariants}

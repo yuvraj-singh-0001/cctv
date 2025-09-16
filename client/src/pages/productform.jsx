@@ -57,6 +57,11 @@ const ProductForm = () => {
       if (data.success) {
         setSubmitSuccess(true);
         
+        // Dispatch custom event to notify other components about product addition
+        window.dispatchEvent(new CustomEvent('productAdded', { 
+          detail: { productId: data.productId } 
+        }));
+        
         // Reset form after success
         setTimeout(() => {
           setSubmitSuccess(false);
