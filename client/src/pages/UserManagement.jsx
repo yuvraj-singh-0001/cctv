@@ -196,7 +196,7 @@ function UserManagement() {
         <div className="px-6 py-4 border-b flex justify-between items-center" style={{backgroundColor: '#CDE1E6'}}>
           <div className="flex items-center gap-2">
             <Users size={20} style={{color: 'rgb(7,72,94)'}} />
-            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+            <h2 className="text-lg font-semibold" style={{color: 'rgba(40, 41, 41, 1)'}}>
               Users ({users.length})
             </h2>
           </div>
