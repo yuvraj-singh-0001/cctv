@@ -114,41 +114,54 @@ function ProductList() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+        className="mb-6 bg-white rounded-xl shadow-lg overflow-hidden"
       >
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search size={20} className="absolute left-3 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search products, brands, or model numbers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-              />
+        <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
+          <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+            Search & Filter Products
+          </h2>
+        </div>
+        <div className="p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search products, brands, or model numbers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                  style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+                />
+              </div>
             </div>
-          </div>
-          <div className="sm:w-48">
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-              style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-            >
-              <option value="">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-          </div>
+            <div className="sm:w-48">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                style={{'--tw-ring-color': 'rgb(7,72,94)'}}
+              >
+                <option value="">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+        </div>
         </div>
       </motion.div>
 
       {/* Products Table */}
       {filteredProducts.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
+            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+              Product Results
+            </h2>
+          </div>
+          <div className="p-12">
             <div className="text-center">
               <Package size={48} className="mx-auto text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -160,9 +173,15 @@ function ProductList() {
                   : 'Get started by adding your first product.'}
               </p>
             </div>
+          </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
+            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
+              Product List ({filteredProducts.length} items)
+            </h2>
+          </div>
             {/* Mobile/Tablet Card View */}
             <div className="block lg:hidden">
               <div className="divide-y divide-gray-200">
@@ -301,8 +320,8 @@ function ProductList() {
                 </tbody>
               </table>
             </div>
-        </div>
-      )}
+          </div>
+        )}
     </div>
   );
 }
