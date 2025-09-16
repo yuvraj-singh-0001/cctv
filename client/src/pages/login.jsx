@@ -42,18 +42,20 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#CDE1E6]">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#CDE1E6] overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white/95 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-[380px] border-t-4 border-[#07485E]"
+        className="bg-white/95 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-4 border-t-4 border-[#07485E]"
       >
-        <h2 className="flex items-center justify-center text-3xl font-bold text-[#07485E] mb-6 space-x-2">
-          <img src={Logo} alt="CCTV Logo" className="w-10 h-10" />
+        {/* Title with Logo */}
+        <h2 className="flex items-center justify-center text-2xl sm:text-3xl font-bold text-[#07485E] mb-6 space-x-2">
+          <img src={Logo} alt="CCTV Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
           <span>CCTV Manage</span>
         </h2>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <motion.input
             whileFocus={{ scale: 1.02 }}
@@ -64,7 +66,7 @@ function Login() {
             value={form.email}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
           />
 
           <motion.input
@@ -76,7 +78,7 @@ function Login() {
             value={form.password}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:border-[#07485E] focus:ring-2 focus:ring-[#07485E] focus:outline-none"
           />
 
           <motion.button
@@ -84,24 +86,26 @@ function Login() {
             disabled={loading}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full bg-[#07485E] hover:bg-[#063646] text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+            className="w-full bg-[#07485E] hover:bg-[#063646] text-white py-3 rounded-lg font-semibold text-sm sm:text-base transition disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </motion.button>
         </form>
 
+        {/* Message */}
         {message && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="mt-4 text-center text-sm font-medium text-[#07485E]"
+            className="mt-4 text-center text-sm sm:text-base font-medium text-[#07485E]"
           >
             {message}
           </motion.p>
         )}
 
-        <p className="mt-4 text-sm text-gray-600 text-center">
+        {/* Footer link */}
+        <p className="mt-4 text-sm sm:text-base text-gray-600 text-center">
           Don’t have an account?{" "}
           <Link
             to="/register"

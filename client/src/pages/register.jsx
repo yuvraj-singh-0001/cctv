@@ -58,7 +58,7 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#CDE1E6]">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#CDE1E6] overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
