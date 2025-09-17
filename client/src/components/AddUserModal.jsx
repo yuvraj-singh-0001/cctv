@@ -1,7 +1,7 @@
 // src/components/AddUserModal.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import { X, User, Mail, Lock, Eye, EyeOff, UserPlus, CheckCircle } from "lucide-react";
 
 function AddUserModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ function AddUserModal({ isOpen, onClose, onSave }) {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -46,13 +47,22 @@ function AddUserModal({ isOpen, onClose, onSave }) {
     setIsLoading(true);
     try {
       await onSave(formData);
-      // Reset form on successful save
-      setFormData({ name: "", email: "", password: "" });
-      setErrors({});
+      // Show success message first
+      setShowSuccess(true);
+      setIsLoading(false); // Stop loading to show success message
+      
+      // Wait a moment then reset form and close
+      setTimeout(() => {
+        setFormData({ name: "", email: "", password: "" });
+        setErrors({});
+        setTimeout(() => {
+          setShowSuccess(false);
+          onClose();
+        }, 1500);
+      }, 1500);
     } catch (error) {
       console.error("Error adding user:", error);
       setErrors({ submit: error.message || "Failed to add user" });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -70,7 +80,26 @@ function AddUserModal({ isOpen, onClose, onSave }) {
       setFormData({ name: "", email: "", password: "" });
       setErrors({});
       setShowPassword(false);
+      setShowSuccess(false);
       onClose();
+    }
+  };
+
+  const handleKeyDown = (e, currentField) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // Move to next field based on current field
+      if (currentField === 'name') {
+        const emailField = document.querySelector('input[type="email"]');
+        if (emailField) emailField.focus();
+      } else if (currentField === 'email') {
+        const passwordField = document.querySelector('input[placeholder="Enter password"]');
+        if (passwordField) passwordField.focus();
+      } else if (currentField === 'password') {
+        // If on password field, submit the form
+        handleSubmit(e);
+      }
     }
   };
 
@@ -124,6 +153,7 @@ function AddUserModal({ isOpen, onClose, onSave }) {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'name')}
                     className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                       errors.name 
                         ? 'border-red-300 focus:ring-red-200' 
@@ -155,6 +185,7 @@ function AddUserModal({ isOpen, onClose, onSave }) {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'email')}
                     className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                       errors.email 
                         ? 'border-red-300 focus:ring-red-200' 
@@ -186,6 +217,7 @@ function AddUserModal({ isOpen, onClose, onSave }) {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'password')}
                     className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                       errors.password 
                         ? 'border-red-300 focus:ring-red-200' 
@@ -222,6 +254,24 @@ function AddUserModal({ isOpen, onClose, onSave }) {
                   className="bg-red-50 border border-red-200 rounded-lg p-3"
                 >
                   <p className="text-red-700 text-sm">{errors.submit}</p>
+                </motion.div>
+              )}
+
+              {/* Success Message */}
+              {showSuccess && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-100 border-2 border-green-300 rounded-lg p-4 shadow-md"
+                  style={{ backgroundColor: '#dcfce7', borderColor: '#16a34a' }}
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    <CheckCircle size={24} className="text-green-600" />
+                    <div className="text-center">
+                      <p className="text-green-800 font-bold text-lg">Success!</p>
+                      <p className="text-green-700 text-sm">New user created successfully</p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
