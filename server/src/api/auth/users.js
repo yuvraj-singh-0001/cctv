@@ -1,5 +1,5 @@
-const pool = require("../../api/config/db");
 const bcrypt = require("bcryptjs");
+const User = require("../../models/User");
 
 // 📌 Add new user
 const addUser = async (req, res) => {
@@ -14,32 +14,21 @@ const addUser = async (req, res) => {
   }
 
   try {
-    // Check if user already exists
-    const [existingUser] = await pool.promise().query(
-      "SELECT id FROM users WHERE email = ?", 
-      [email]
-    );
-
-    if (existingUser.length > 0) {
+    const existing = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existing) {
       return res.status(400).json({ 
         success: false, 
         message: "User with this email already exists" 
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert new user
-    const [result] = await pool.promise().query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
-    );
+    const user = await User.create({ name, email: email.toLowerCase().trim(), password: hashedPassword });
 
     res.status(201).json({ 
       success: true, 
       message: "✅ User added successfully",
-      userId: result.insertId
+      userId: user._id
     });
   } catch (err) {
     console.error("❌ Add user error:", err.message);
@@ -50,10 +39,9 @@ const addUser = async (req, res) => {
 // 📌 Get all users
 const getUsers = async (req, res) => {
   try {
-    const [rows] = await pool.promise().query(
-      "SELECT id, name, email, created_at FROM users"
-    );
-    res.json({ success: true, users: rows });
+    const users = await User.find({}, { name: 1, email: 1, created_at: 1 }).sort({ created_at: -1 });
+    const formatted = users.map(u => ({ id: u._id, name: u.name, email: u.email, created_at: u.created_at }));
+    res.json({ success: true, users: formatted });
   } catch (err) {
     console.error("❌ Fetch users error:", err.message);
     res.status(500).json({ success: false, message: "Server error" });
@@ -66,19 +54,13 @@ const updateUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    let query = "UPDATE users SET name = ?, email = ? WHERE id = ?";
-    let values = [name, email, id];
-
-    // If password is provided, hash it and update as well
+    const update = { name, email: email?.toLowerCase().trim() };
     if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      query = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
-      values = [name, email, hashedPassword, id];
+      update.password = await bcrypt.hash(password, 10);
     }
 
-    const [result] = await pool.promise().query(query, values);
-
-    if (result.affectedRows === 0) {
+    const result = await User.findByIdAndUpdate(id, update, { new: true });
+    if (!result) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
@@ -94,12 +76,10 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [result] = await pool.promise().query("DELETE FROM users WHERE id = ?", [id]);
-
-    if (result.affectedRows === 0) {
+    const result = await User.findByIdAndDelete(id);
+    if (!result) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
     res.json({ success: true, message: "🗑️ User deleted successfully" });
   } catch (err) {
     console.error("❌ Delete user error:", err.message);

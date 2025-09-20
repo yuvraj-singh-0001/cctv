@@ -1,16 +1,10 @@
-const pool = require("../../api/config/db");
+const User = require("../../models/User");
 
 const getUsers = async (req, res) => {
   try {
-    // Fetch all users (you can limit fields like exclude password)
-    const [rows] = await pool.promise().query(
-      "SELECT id, name, email, created_at FROM users"
-    );
-
-    res.json({
-      success: true,
-      users: rows,
-    });
+    const users = await User.find({}, { name: 1, email: 1, created_at: 1 }).sort({ created_at: -1 });
+    const formatted = users.map(u => ({ id: u._id, name: u.name, email: u.email, created_at: u.created_at }));
+    res.json({ success: true, users: formatted });
   } catch (err) {
     console.error("❌ Fetch users error:", err.message);
     res.status(500).json({ success: false, message: "Server error" });
