@@ -2,11 +2,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');   // <-- add this
 const routes = require('./src/routes/router');
+const { connectDB } = require('./src/api/config/db');
 
 dotenv.config();
 
-// Initialize database tables
-require('./src/api/config/createTables');
+// Initialize MongoDB
+connectDB();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

@@ -1,23 +1,20 @@
-const mysql = require("mysql2");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 dotenv.config(); // <-- load environment variables here
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "cctv_db",
-});
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/cctv_db";
 
-// Test connection when file loads
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error("❌ MySQL connection failed:", err.message);
-  } else {
-    console.log(`✅ MySQL connected to database: ${process.env.DB_NAME}`);
-    connection.release();
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      // options can be added if needed
+    });
+    console.log("✅ MongoDB connected:", MONGO_URI);
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
   }
-});
+};
 
-module.exports = pool;
+module.exports = { connectDB };
