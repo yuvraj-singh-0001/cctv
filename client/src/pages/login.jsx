@@ -29,6 +29,13 @@ function Login() {
 
       if (res.ok) {
         setMessage("✅ Login successful!");
+        // persist simple auth flag and basic user (optional)
+        try {
+          localStorage.setItem("auth", "true");
+          if (data?.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+        } catch (_) {}
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
         setMessage(`❌ ${data.message || "Login failed"}`);
@@ -56,7 +63,7 @@ function Login() {
         </h2>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4"> 
           <motion.input
             whileFocus={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 200 }}
