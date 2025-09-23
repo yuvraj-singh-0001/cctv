@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 
 const login = async (req, res) => {
@@ -21,21 +20,6 @@ const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "❌ Invalid email or password" });
     }
-
-    // JWT generate karein
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET || "secretkey",
-      { expiresIn: "1d" }
-    );
-
-    // HTTP-only cookie set karein
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 din
-    });
 
     res.json({
       message: "✅ Login successful!",
