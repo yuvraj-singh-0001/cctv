@@ -1,7 +1,7 @@
 // src/pages/UserManagement.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Edit, Trash2, RefreshCw, Users, Plus, Search, Filter } from "lucide-react";
+import { Edit, Trash2, RefreshCw, Users, Plus, Search } from "lucide-react";
 import EditUserModal from "../components/EditUserModal";
 import AddUserModal from "../components/AddUserModal";
 
@@ -11,6 +11,10 @@ function UserManagement() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  // 👉 states for search & filter
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterOption, setFilterOption] = useState("All");
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -34,8 +38,11 @@ function UserManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error(`Failed to delete user. Status: ${res.status}`);
+      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok)
+        throw new Error(`Failed to delete user. Status: ${res.status}`);
       setUsers(users.filter((u) => u.id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -54,10 +61,16 @@ function UserManagement() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       });
-      if (!res.ok) throw new Error(`Failed to update user. Status: ${res.status}`);
-      
-      // Update the user in the local state
-      setUsers(users.map((u) => (u.id === id ? { ...u, name: updateData.name, email: updateData.email } : u)));
+      if (!res.ok)
+        throw new Error(`Failed to update user. Status: ${res.status}`);
+
+      setUsers(
+        users.map((u) =>
+          u.id === id
+            ? { ...u, name: updateData.name, email: updateData.email }
+            : u
+        )
+      );
       setEditModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
@@ -73,13 +86,14 @@ function UserManagement() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || `Failed to add user. Status: ${res.status}`);
+        throw new Error(
+          errorData.message || `Failed to add user. Status: ${res.status}`
+        );
       }
-      
-      // Refresh users list to show the new user
+
       await fetchUsers();
       setAddModalOpen(false);
     } catch (error) {
@@ -97,16 +111,35 @@ function UserManagement() {
     setAddModalOpen(false);
   };
 
+  // 👉 Combine search + filter
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesFilter =
+      filterOption === "All" ? true : user.role === filterOption;
+
+    return matchesSearch && matchesFilter;
+  });
+
   if (isLoading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen p-4 flex justify-center items-center"
       >
         <div className="flex items-center space-x-2">
-          <RefreshCw className="animate-spin" size={28} style={{ color: "rgb(7,72,94)" }} />
-          <span className="text-lg font-medium" style={{ color: "rgb(7,72,94)" }}>
+          <RefreshCw
+            className="animate-spin"
+            size={28}
+            style={{ color: "rgb(7,72,94)" }}
+          />
+          <span
+            className="text-lg font-medium"
+            style={{ color: "rgb(7,72,94)" }}
+          >
             Loading users...
           </span>
         </div>
@@ -115,7 +148,7 @@ function UserManagement() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -123,40 +156,40 @@ function UserManagement() {
     >
       {/* Header Section */}
       <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-xl sm:text-2xl font-bold truncate" 
-          style={{color: 'rgb(7,72,94)'}}
+          className="text-xl sm:text-2xl font-bold truncate"
+          style={{ color: "rgb(7,72,94)" }}
         >
           User Management Dashboard
         </motion.h1>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
           className="flex gap-2 sm:gap-3"
         >
-          <button 
+          <button
             onClick={() => setAddModalOpen(true)}
             className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 text-sm sm:text-base"
             style={{
-              backgroundColor: 'rgb(7,72,94)',
-              color: 'white'
+              backgroundColor: "rgb(7,72,94)",
+              color: "white",
             }}
           >
             <Plus size={16} />
             Add User
           </button>
-          <button 
+          <button
             onClick={fetchUsers}
             className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 text-sm sm:text-base"
             style={{
-              backgroundColor: 'white',
-              color: 'rgb(7,72,94)',
-              border: '2px solid rgb(7,72,94)'
+              backgroundColor: "white",
+              color: "rgb(7,72,94)",
+              border: "2px solid rgb(7,72,94)",
             }}
           >
             <RefreshCw size={16} />
@@ -171,48 +204,73 @@ function UserManagement() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-4 flex flex-col sm:flex-row gap-3"
       >
+        {/* Search Bar */}
         <div className="flex-1 flex items-center bg-white rounded-lg px-3 py-2 shadow-sm">
           <Search size={16} className="text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search users by name or email..." 
+          <input
+            type="text"
+            placeholder="Search users by name or email..."
             className="ml-2 outline-none text-sm flex-1"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all" style={{color: 'rgb(7,72,94)'}}>
-          <Filter size={16} />
-          Filter
-        </button>
+
+        {/* Filter Dropdown */}
+        <div className="flex items-center">
+          <select
+            value={filterOption}
+            onChange={(e) => setFilterOption(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:shadow-md transition-all outline-none"
+            style={{ color: "rgb(7,72,94)" }}
+          >
+            <option value="All">All Users</option>
+            <option value="Admin">Admins</option>
+            <option value="User">Users</option>
+            <option value="Guest">Guests</option>
+          </select>
+        </div>
       </motion.div>
 
       {/* Users Table */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
         className="bg-white rounded-xl shadow-lg overflow-hidden"
       >
         {/* Table Header */}
-        <div className="px-6 py-4 border-b flex justify-between items-center" style={{backgroundColor: '#CDE1E6'}}>
+        <div
+          className="px-6 py-4 border-b flex justify-between items-center"
+          style={{ backgroundColor: "#CDE1E6" }}
+        >
           <div className="flex items-center gap-2">
-            <Users size={20} style={{color: 'rgb(7,72,94)'}} />
-            <h2 className="text-lg font-semibold" style={{color: 'rgba(40, 41, 41, 1)'}}>
-              Users ({users.length})
+            <Users size={20} style={{ color: "rgb(7,72,94)" }} />
+            <h2
+              className="text-lg font-semibold"
+              style={{ color: "rgba(40, 41, 41, 1)" }}
+            >
+              Users ({filteredUsers.length})
             </h2>
           </div>
         </div>
 
-        {users.length === 0 ? (
+        {filteredUsers.length === 0 ? (
           <div className="text-center py-12">
             <Users size={48} className="mx-auto mb-4 text-gray-300" />
             <p className="text-gray-500 text-lg mb-2">No users found</p>
-            <p className="text-gray-400 text-sm">Add your first user to get started</p>
+            <p className="text-gray-400 text-sm">
+              Try adjusting your search or filter
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b" style={{backgroundColor: 'rgb(7,72,94)'}}>
+                <tr
+                  className="border-b"
+                  style={{ backgroundColor: "rgb(7,72,94)" }}
+                >
                   <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
                     ID
                   </th>
@@ -228,23 +286,23 @@ function UserManagement() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {users.map((user, index) => {
+                {filteredUsers.map((user, index) => {
                   const variants = {
                     hidden: { opacity: 0, x: -20 },
-                    visible: { 
-                      opacity: 1, 
+                    visible: {
+                      opacity: 1,
                       x: 0,
-                      transition: { delay: index * 0.05 }
-                    }
+                      transition: { delay: index * 0.05 },
+                    },
                   };
 
                   return (
-                    <motion.tr 
+                    <motion.tr
                       key={user.id}
                       variants={variants}
                       initial="hidden"
                       animate="visible"
-                      whileHover={{ backgroundColor: 'rgba(7,72,94,0.05)' }}
+                      whileHover={{ backgroundColor: "rgba(7,72,94,0.05)" }}
                       className="hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -253,7 +311,10 @@ function UserManagement() {
                       <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-8 w-8">
-                            <div className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{backgroundColor: 'rgb(7,72,94)'}}>
+                            <div
+                              className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
+                              style={{ backgroundColor: "rgb(7,72,94)" }}
+                            >
                               {user.name.charAt(0).toUpperCase()}
                             </div>
                           </div>
@@ -275,7 +336,10 @@ function UserManagement() {
                           <button
                             onClick={() => handleEditClick(user)}
                             className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
-                            style={{ backgroundColor: 'rgb(7,72,94)', color: 'white' }}
+                            style={{
+                              backgroundColor: "rgb(7,72,94)",
+                              color: "white",
+                            }}
                           >
                             <Edit size={12} className="mr-1" />
                             Edit
