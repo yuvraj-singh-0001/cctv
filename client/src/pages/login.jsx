@@ -20,10 +20,12 @@ function Login() {
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include", // Important: send and receive cookies
+  body: JSON.stringify(form),
+});
+
 
       const data = await res.json();
 
@@ -31,10 +33,6 @@ function Login() {
         setMessage("✅ Login successful!");
         // persist simple auth flag and basic user (optional)
         try {
-          localStorage.setItem("auth", "true");
-          if (data?.user) {
-            localStorage.setItem("user", JSON.stringify(data.user));
-          }
         } catch (_) {}
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
