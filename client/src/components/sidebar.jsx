@@ -23,6 +23,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
     { id: 'productform', label: 'Add Product', icon: PlusCircle, path: '/productform' }, // ✅ fixed id + path
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'product-list', label: 'Product List', icon: List, path: '/product-list' },
+    { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' }
   ];
 
   const toggleSidebar = () => {
@@ -106,17 +107,13 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
                     <button
                       onClick={() => {
                         setActiveTab(item.id);
-                        navigate(item.path); // ✅ navigate to page
-                        if (window.innerWidth < 768) setIsMobileOpen(false);
+                        navigate(item.path);
+                        setIsMobileOpen(false);
                       }}
-                      className={`w-full flex items-center rounded-lg p-3 transition-colors ${activeTab === item.id ? 'font-semibold' : 'hover:bg-gray-100'}`}
-                      style={{
-                        backgroundColor: activeTab === item.id ? 'rgb(205,225,230)' : 'transparent',
-                        color: 'rgb(7,72,94)'
-                      }}
+                      className={`w-full flex items-center p-3 rounded-lg transition-colors ${activeTab === item.id ? 'bg-blue-100' : ''}`}
                     >
                       <Icon size={20} />
-                      {(!isCollapsed || isMobileOpen) && <span className="ml-3">{item.label}</span>}
+                      {!isCollapsed && <span className="ml-3">{item.label}</span>}
                     </button>
                   </li>
                 );
