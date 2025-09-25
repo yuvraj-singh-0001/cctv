@@ -66,7 +66,9 @@ function App() {
         } />
         <Route path="/supplier-management" element={
           <ProtectedRoute>
-            <SupplierForm />
+            <Layout showSidebar={true} showNavbar={false}>
+              <SupplierForm />
+            </Layout>
           </ProtectedRoute>
         } />
         
