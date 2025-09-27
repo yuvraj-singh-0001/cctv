@@ -1,10 +1,10 @@
 const Supplier = require("../../models/supplier");
 
-// Get all suppliers
 const getSuppliers = async (req, res) => {
   try {
     const suppliers = await Supplier.find().sort({ createdAt: -1 });
-    res.json(suppliers);
+    // 👇 is tarah bhejo
+    res.json({ suppliers });
   } catch (error) {
     res.status(500).json({ message: "Error fetching suppliers", error: error.message });
   }
