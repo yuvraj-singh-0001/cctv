@@ -9,7 +9,8 @@ import {
   ChevronRight,
   X,
   Menu,
-  LogOut
+  LogOut,
+  Building2
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom"; // ✅ import navigation hook
 import Logo from "./logo.png";
@@ -23,7 +24,8 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
     { id: 'productform', label: 'Add Product', icon: PlusCircle, path: '/productform' }, // ✅ fixed id + path
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'product-list', label: 'Product List', icon: List, path: '/product-list' },
-    { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' }
+    { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
+    { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' } // <-- Add this line
   ];
 
   const toggleSidebar = () => {

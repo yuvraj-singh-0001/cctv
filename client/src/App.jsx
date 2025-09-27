@@ -9,6 +9,7 @@ import ProductForm from "./pages/productform.jsx";
 import UserManagement from "./pages/UserManagement.jsx";
 import ProductList from "./pages/ProductList.jsx";
 import SupplierForm from "./masters/supplier-form"; // sahi path check karein
+import SupplierList from "./masters/supplier-list.jsx";
 
 // Simple protected route wrapper
 function ProtectedRoute({ children }) {
@@ -68,6 +69,13 @@ function App() {
           <ProtectedRoute>
             <Layout showSidebar={true} showNavbar={false}>
               <SupplierForm />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/supplier-list" element={
+          <ProtectedRoute>
+            <Layout showSidebar={true} showNavbar={false}>
+              <SupplierList />
             </Layout>
           </ProtectedRoute>
         } />
