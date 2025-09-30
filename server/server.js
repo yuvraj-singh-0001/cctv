@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser'); // <-- add this
 const routes = require('./src/routes/router');
 const { connectDB } = require('./src/api/config/db');
+const masterRoutes = require('./src/controllers/master');
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 
 // API routes
 app.use('/api', routes);
+app.use('/api/master', masterRoutes);
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);

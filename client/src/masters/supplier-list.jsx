@@ -9,7 +9,7 @@ const SupplierList = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/master", {
+        const res = await fetch("http://localhost:5000/api/master/supplier/get-supplier", {
           credentials: "include",
         });
         const data = await res.json();
