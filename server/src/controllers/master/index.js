@@ -1,11 +1,13 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const { getSuppliers } = require("../../api/master/get-supplier");
-const{addSupplier}=require("../../api/master/post-supplier");
+const { getSuppliers } = require('../../api/master/supplier/get-supplier');
+const { addSupplier } = require('../../api/master/supplier/post-supplier');
 
-// Product routes
-router.post("/add", addSupplier);           // Add new supplier
-router.get("/", getSuppliers);              // Get all suppliers  
+// GET suppliers
+router.get('/supplier/get-supplier', getSuppliers);
+
+// POST supplier
+router.post('/supplier/add', addSupplier);
 
 module.exports = router;

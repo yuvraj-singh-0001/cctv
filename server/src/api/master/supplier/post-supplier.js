@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-const Supplier = require("../../models/supplier");
+const Supplier = require("../../../models/supplier");
 
 // Add new supplier
 const addSupplier = async (req, res) => {

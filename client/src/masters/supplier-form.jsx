@@ -62,7 +62,7 @@ const SupplierForm = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/master/add", {
+      const res = await fetch("http://localhost:5000/api/master/supplier/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
