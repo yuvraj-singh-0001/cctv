@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Building2, Search } from "lucide-react";
+import EditSupplierModal from "../masters/EditSupplierModal"; // <-- Import new modal
 
 const SupplierList = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editSupplier, setEditSupplier] = useState(null);
 
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/master/supplier/get-supplier", {
-          credentials: "include",
-        });
+        const res = await fetch(
+          "http://localhost:5000/api/master/supplier/get-supplier",
+          {
+            credentials: "include",
+          }
+        );
         const data = await res.json();
         if (res.ok) {
           setSuppliers(data.suppliers || []);
@@ -47,6 +52,35 @@ const SupplierList = () => {
       pan.startsWith(term)
     );
   });
+
+  const handleEdit = (supplier) => {
+    setEditSupplier(supplier);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this supplier?"))
+      return;
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/master/supplier/delete/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (res.ok) {
+        setSuppliers(suppliers.filter((s) => s._id !== id));
+      }
+    } catch {}
+  };
+
+  const handleUpdate = (updatedSupplier) => {
+    setSuppliers(
+      suppliers.map((s) =>
+        s._id === updatedSupplier._id ? updatedSupplier : s
+      )
+    );
+  };
 
   return (
     <div className="max-w-5xl mx-auto py-8">
@@ -84,13 +118,54 @@ const SupplierList = () => {
           <table className="min-w-full bg-white rounded-xl shadow-lg">
             <thead>
               <tr style={{ backgroundColor: "#CDE1E6" }}>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>Name</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>Contact Person</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>Phone</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>Email</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>GST</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>PAN</th>
-                <th className="px-4 py-3 text-left font-semibold" style={{ color: "rgb(7,72,94)" }}>Status</th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Name
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Contact Person
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Phone
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Email
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  GST
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  PAN
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Status
+                </th>
+                <th
+                  className="px-4 py-3 text-left font-semibold"
+                  style={{ color: "rgb(7,72,94)" }}
+                >
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -113,11 +188,34 @@ const SupplierList = () => {
                       {s.status}
                     </span>
                   </td>
+                  <td className="px-4 py-3 flex gap-2">
+                    <button
+                      className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs"
+                      onClick={() => handleEdit(s)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs"
+                      onClick={() => handleDelete(s._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {editSupplier && (
+        <EditSupplierModal
+          supplier={editSupplier}
+          onClose={() => setEditSupplier(null)}
+          onUpdate={handleUpdate}
+        />
       )}
     </div>
   );
