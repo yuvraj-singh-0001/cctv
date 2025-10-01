@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 
 // API routes
 app.use('/api', routes);
-app.use('/api/master', masterRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
