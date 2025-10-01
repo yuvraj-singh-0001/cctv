@@ -11,10 +11,13 @@ import {
   Banknote, 
   Save, 
   X,
-  CheckCircle
+  CheckCircle,
+  List
 } from "lucide-react";
+import SupplierList from "../masters/supplier-list"; // Import your SupplierList component
 
 const SupplierForm = () => {
+  const [currentView, setCurrentView] = useState("form"); // "form" or "list"
   const [form, setForm] = useState({
     name: "",
     contactPerson: "",
@@ -99,22 +102,37 @@ const SupplierForm = () => {
     }
   };
 
-  return (
+  // Render the form view
+  const renderForm = () => (
     <div className="w-full">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Header with Toggle Button */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-white shadow-sm">
-              <Building2 size={24} style={{color: 'rgb(7,72,94)'}} />
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-white shadow-sm">
+                <Building2 size={24} style={{color: 'rgb(7,72,94)'}} />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold truncate" style={{color: 'rgb(7,72,94)'}}>
+                Supplier Form
+              </h1>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold truncate" style={{color: 'rgb(7,72,94)'}}>
-              Supplier Form
-            </h1>
+            <button
+              onClick={() => setCurrentView("list")}
+              className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-lg"
+              style={{
+                backgroundColor: 'white',
+                color: 'rgb(7,72,94)',
+                border: '2px solid rgb(7,72,94)'
+              }}
+            >
+              <List size={16} />
+              Show Suppliers
+            </button>
           </div>
           <p className="text-gray-600 ml-12">
             Fill in supplier details to add into the system
@@ -199,6 +217,7 @@ const SupplierForm = () => {
 
           {/* Form */}
           <form id="supplier-form" onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* ... (rest of your form code remains exactly the same) ... */}
             
             {/* Basic Info */}
             <div>
@@ -258,7 +277,6 @@ const SupplierForm = () => {
                 </h3>
               </div>
 
-              {/* Contact Details Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
@@ -334,7 +352,6 @@ const SupplierForm = () => {
                 </h3>
               </div>
 
-              {/* Tax Details Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
@@ -389,7 +406,6 @@ const SupplierForm = () => {
                 </h3>
               </div>
 
-              {/* Bank Details Section */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
@@ -445,13 +461,6 @@ const SupplierForm = () => {
                     placeholder="e.g., Andheri West, Mumbai"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                     style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-                    // Last field: Enter does nothing or can submit
-                    onKeyDown={e => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        // Optionally: document.getElementById("supplier-form").requestSubmit();
-                      }
-                    }}
                   />
                 </div>
               </div>
@@ -461,6 +470,38 @@ const SupplierForm = () => {
       </div>
     </div>
   );
+
+  // Render the list view
+  const renderList = () => (
+    <div className="w-full">
+      <div className="max-w-5xl mx-auto">
+        {/* Header with Toggle Button */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <Building2 size={28} style={{ color: "rgb(7,72,94)" }} />
+            <h1 className="text-2xl font-bold" style={{ color: "rgb(7,72,94)" }}>
+              Supplier List
+            </h1>
+          </div>
+          <button
+            onClick={() => setCurrentView("form")}
+            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-lg"
+            style={{
+              backgroundColor: 'rgb(7,72,94)',
+              color: 'white',
+              border: '2px solid rgb(7,72,94)'
+            }}
+          >
+            <User size={16} />
+            Add Supplier
+          </button>
+        </div>
+        <SupplierList />
+      </div>
+    </div>
+  );
+
+  return currentView === "form" ? renderForm() : renderList();
 };
 
 export default SupplierForm;
