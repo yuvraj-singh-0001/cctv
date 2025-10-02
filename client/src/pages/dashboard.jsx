@@ -179,6 +179,8 @@ function Dashboard() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="flex h-64 items-center justify-center"
+        role="status"
+        aria-live="polite"
       >
         <div className="text-center">
           <motion.div
@@ -202,6 +204,7 @@ function Dashboard() {
   }
 
   return (
+    <>
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -246,16 +249,6 @@ function Dashboard() {
                 />
               </motion.div>
             )}
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleRefresh}
-              className="p-2 rounded-lg bg-white shadow-sm"
-              style={{ color: 'rgb(7,72,94)' }}
-            >
-              <RefreshCw size={18} />
-            </motion.button>
           </div>
         </div>
 
@@ -280,12 +273,12 @@ function Dashboard() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8"
         >
           <motion.div 
             variants={itemVariants}
-            whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-            className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 shadow-sm border border-gray-200"
+            whileHover={{ y: -4, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.12)" }}
+            className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-sm ring-1 ring-gray-200/70 transition"
           >
             <div className="flex items-center">
               <motion.div 
@@ -387,6 +380,8 @@ function Dashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-1 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+                aria-label="Filter today's products"
+                title="Filter"
               >
                 <Filter size={14} className="hidden xs:block" />
                 <span className="text-xs">Filter</span>
@@ -395,6 +390,8 @@ function Dashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-1 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+                aria-label="Export today's products"
+                title="Export"
               >
                 <Download size={14} className="hidden xs:block" />
                 <span className="text-xs">Export</span>
@@ -417,6 +414,7 @@ function Dashboard() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
+                    <caption className="sr-only">Today's new products</caption>
                     <thead>
                       <tr className="border-b border-gray-200">
                         <th className="px-2 sm:px-3 md:px-4 py-2 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>Product</th>
@@ -493,6 +491,7 @@ function Dashboard() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
+              <caption className="sr-only">Recent product entries</caption>
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="px-2 sm:px-3 md:px-4 py-2 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>Product</th>
@@ -556,6 +555,19 @@ function Dashboard() {
           </div>
         </motion.div>
     </motion.div>
+
+    {/* Floating Refresh Button - side on desktop, bottom-right on mobile */}
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={handleRefresh}
+      className="fixed right-4 bottom-5 md:right-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-40 p-3 rounded-full shadow-lg bg-[rgb(7,72,94)] text-white hover:bg-[rgb(6,60,78)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgb(7,72,94)]"
+      aria-label="Refresh data"
+      title="Refresh"
+    >
+      <RefreshCw size={20} />
+    </motion.button>
+    </>
   );
 }
 
