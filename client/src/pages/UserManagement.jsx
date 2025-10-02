@@ -155,22 +155,24 @@ function UserManagement() {
       className="w-full"
     >
       {/* Header Section */}
-      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-xl sm:text-2xl font-bold truncate"
-          style={{ color: "rgb(7,72,94)" }}
-        >
-          User Management Dashboard
-        </motion.h1>
+      <div className="mb-4 sm:mb-6 flex flex-row justify-between items-center gap-3 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-xl sm:text-2xl font-bold truncate"
+            style={{ color: "rgb(7,72,94)" }}
+          >
+            User Management Dashboard
+          </motion.h1>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex gap-2 sm:gap-3"
+          className="flex gap-2 sm:gap-3 shrink-0"
         >
           <button
             onClick={() => setAddModalOpen(true)}
@@ -182,18 +184,6 @@ function UserManagement() {
           >
             <Plus size={16} />
             Add User
-          </button>
-          <button
-            onClick={fetchUsers}
-            className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 text-sm sm:text-base"
-            style={{
-              backgroundColor: "white",
-              color: "rgb(7,72,94)",
-              border: "2px solid rgb(7,72,94)",
-            }}
-          >
-            <RefreshCw size={16} />
-            Refresh
           </button>
         </motion.div>
       </div>
@@ -241,17 +231,32 @@ function UserManagement() {
       >
         {/* Table Header */}
         <div
-          className="px-6 py-4 border-b flex justify-between items-center"
+          className="px-4 sm:px-6 py-3 sm:py-4 border-b"
           style={{ backgroundColor: "#CDE1E6" }}
         >
-          <div className="flex items-center gap-2">
-            <Users size={20} style={{ color: "rgb(7,72,94)" }} />
-            <h2
-              className="text-lg font-semibold"
-              style={{ color: "rgba(40, 41, 41, 1)" }}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <Users size={20} style={{ color: "rgb(7,72,94)" }} />
+              <h2
+                className="text-base sm:text-lg font-semibold truncate"
+                style={{ color: "rgba(40, 41, 41, 1)" }}
+                title={`Users (${filteredUsers.length})`}
+              >
+                Users ({filteredUsers.length})
+              </h2>
+            </div>
+            <button
+              onClick={fetchUsers}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium transition-all hover:shadow-sm text-sm sm:text-[13px]"
+              style={{
+                backgroundColor: "white",
+                color: "rgb(7,72,94)",
+                border: "1.5px solid rgb(7,72,94)",
+              }}
             >
-              Users ({filteredUsers.length})
-            </h2>
+              <RefreshCw size={16} />
+              <span className="hidden xs:inline">Refresh</span>
+            </button>
           </div>
         </div>
 
@@ -264,52 +269,107 @@ function UserManagement() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr
-                  className="border-b"
-                  style={{ backgroundColor: "rgb(7,72,94)" }}
-                >
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map((user, index) => {
-                  const variants = {
-                    hidden: { opacity: 0, x: -20 },
-                    visible: {
-                      opacity: 1,
-                      x: 0,
-                      transition: { delay: index * 0.05 },
-                    },
-                  };
+          <>
+            {/* Mobile/Tablet Card View */}
+            <div className="block lg:hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+                {filteredUsers.map((user, index) => (
+                  <motion.div
+                    key={user.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className="p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center min-w-0">
+                        <div
+                          className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3"
+                          style={{ backgroundColor: "rgb(7,72,94)" }}
+                        >
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-gray-900 truncate">{user.name}</div>
+                          <div className="text-xs text-gray-500 truncate">{user.email}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditClick(user)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:opacity-90"
+                          style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
+                        >
+                          <Edit size={12} className="mr-1" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
+                        >
+                          <Trash2 size={12} className="mr-1" />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
-                  return (
-                    <motion.tr
-                      key={user.id}
-                      variants={variants}
-                      initial="hidden"
-                      animate="visible"
-                      whileHover={{ backgroundColor: "rgba(7,72,94,0.05)" }}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #{user.id}
-                      </td>
-                      <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
-                        <div className="flex items-center">
+            {/* Desktop Table View */}
+            <div className="hidden lg:block">
+              <table className="w-full table-fixed">
+                <colgroup>
+                  <col style={{ width: '0' }} />
+                  <col />
+                  <col style={{ width: '45%' }} />
+                  <col style={{ width: '9rem' }} />
+                </colgroup>
+                <thead>
+                  <tr
+                    className="border-b"
+                    style={{ backgroundColor: "rgb(7,72,94)" }}
+                  >
+                    <th className="hidden xl:table-cell px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-24">
+                      ID
+                    </th>
+                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-36 xl:w-40">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredUsers.map((user, index) => {
+                    const variants = {
+                      hidden: { opacity: 0, x: -20 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { delay: index * 0.05 },
+                      },
+                    };
+
+                    return (
+                      <motion.tr
+                        key={user.id}
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        whileHover={{ backgroundColor: "rgba(7,72,94,0.05)" }}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="hidden xl:table-cell px-2 sm:px-3 py-2 text-sm font-medium text-gray-900">
+                          #{user.id}
+                        </td>
+                      <td className="px-2 sm:px-3 py-2">
+                        <div className="flex items-center min-w-0">
                           <div className="flex-shrink-0 h-8 w-8">
                             <div
                               className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
@@ -318,47 +378,45 @@ function UserManagement() {
                               {user.name.charAt(0).toUpperCase()}
                             </div>
                           </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
+                          <div className="ml-2 min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">
                               {user.name}
                             </div>
-                            <div className="text-sm text-gray-500 sm:hidden">
-                              {user.email}
-                            </div>
+                            <div className="text-sm text-gray-500 sm:hidden truncate max-w-[340px] xl:max-w-[480px]" title={user.email}>{user.email}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="hidden sm:table-cell px-4 sm:px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                        {user.email}
+                      <td className="px-2 sm:px-3 py-2 text-sm text-gray-500">
+                        <div className="truncate max-w-[280px] lg:max-w-[320px] xl:max-w-[480px]" title={user.email}>{user.email}</div>
                       </td>
-                      <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-sm font-medium">
-                        <div className="flex gap-2">
+                      <td className="px-2 sm:px-3 py-2 text-sm font-medium">
+                        <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => handleEditClick(user)}
-                            className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
-                            style={{
-                              backgroundColor: "rgb(7,72,94)",
-                              color: "white",
-                            }}
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
+                            style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
+                            aria-label="Edit user"
                           >
-                            <Edit size={12} className="mr-1" />
-                            Edit
+                            <Edit size={14} />
+                            <span className="hidden xl:inline ml-1">Edit</span>
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
-                            className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
+                            aria-label="Delete user"
                           >
-                            <Trash2 size={12} className="mr-1" />
-                            Delete
+                            <Trash2 size={14} />
+                            <span className="hidden xl:inline ml-1">Delete</span>
                           </button>
                         </div>
                       </td>
-                    </motion.tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </motion.div>
 

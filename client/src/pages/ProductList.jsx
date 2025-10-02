@@ -87,8 +87,8 @@ function ProductList() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
+        <div className="flex flex-row justify-between items-center gap-3 sm:gap-4">
+          <div className="flex-1 min-w-0">
             <h1 className="text-2xl sm:text-3xl font-bold" style={{color: 'rgb(7,72,94)'}}>
               Product List
             </h1>
@@ -97,7 +97,7 @@ function ProductList() {
           
           <button
             onClick={loadProducts}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
+            className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
             style={{
               backgroundColor: 'rgb(7,72,94)',
               color: 'white'
@@ -116,22 +116,22 @@ function ProductList() {
         transition={{ delay: 0.1 }}
         className="mb-6 bg-white rounded-xl shadow-lg overflow-hidden"
       >
-        <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
+        <div className="px-4 sm:px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
           <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
             Search & Filter Products
           </h2>
         </div>
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Search size={20} className="absolute left-3 top-2.5 sm:top-3 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search products, brands, or model numbers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
                   style={{'--tw-ring-color': 'rgb(7,72,94)'}}
                 />
               </div>
@@ -140,7 +140,7 @@ function ProductList() {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                className="w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
                 style={{'--tw-ring-color': 'rgb(7,72,94)'}}
               >
                 <option value="">All Categories</option>
@@ -184,20 +184,20 @@ function ProductList() {
           </div>
             {/* Mobile/Tablet Card View */}
             <div className="block lg:hidden">
-              <div className="divide-y divide-gray-200">
+              <div className="grid grid-cols-1 gap-4 p-4">
                 {filteredProducts.map((product, index) => (
                   <div
                     key={product.id}
-                    className="p-4 hover:bg-gray-50 cursor-pointer"
+                    className="p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow cursor-pointer"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center min-w-0">
                         <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
                           <Package size={20} className="text-blue-600" />
                         </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-900">{product.name}</h3>
-                          <p className="text-xs text-gray-500">{product.modelNumber}</p>
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-semibold text-gray-900 truncate">{product.name}</h3>
+                          <p className="text-xs text-gray-500 truncate">{product.modelNumber}</p>
                         </div>
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -208,16 +208,10 @@ function ProductList() {
                         {product.status}
                       </span>
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <span className="text-gray-600">Brand: </span>
-                        <span className="font-medium">{product.brand}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Category: </span>
-                        <span className="font-medium">{product.category}</span>
-                      </div>
+
+                    <div className="mt-3 pt-3 border-t grid grid-cols-2 gap-3 text-sm">
+                      <div className="truncate"><span className="text-gray-600">Brand: </span><span className="font-medium truncate">{product.brand}</span></div>
+                      <div className="truncate"><span className="text-gray-600">Category: </span><span className="font-medium truncate">{product.category}</span></div>
                       <div>
                         <span className="text-gray-600">Price: </span>
                         <span className="font-bold" style={{color: 'rgb(7,72,94)'}}>
