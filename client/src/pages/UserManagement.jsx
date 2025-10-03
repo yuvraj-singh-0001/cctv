@@ -321,26 +321,26 @@ function UserManagement() {
             <div className="hidden lg:block">
               <table className="w-full table-fixed">
                 <colgroup>
-                  <col style={{ width: '0' }} />
-                  <col />
-                  <col style={{ width: '45%' }} />
-                  <col style={{ width: '9rem' }} />
+                  <col style={{ width: '14rem' }} />
+                  <col style={{ width: '42%' }} />
+                  <col style={{ width: '32%' }} />
+                  <col style={{ width: '12rem' }} />
                 </colgroup>
                 <thead>
                   <tr
                     className="border-b"
                     style={{ backgroundColor: "rgb(7,72,94)" }}
                   >
-                    <th className="hidden xl:table-cell px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-24">
+                    <th className="px-3 py-3 pr-8 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
                       ID
                     </th>
-                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
+                    <th className="px-3 py-3 pl-8 pr-6 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-3 sm:px-4 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-36 xl:w-40">
+                    <th className="px-3 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-44">
                       Actions
                     </th>
                   </tr>
@@ -365,51 +365,49 @@ function UserManagement() {
                         whileHover={{ backgroundColor: "rgba(7,72,94,0.05)" }}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="hidden xl:table-cell px-2 sm:px-3 py-2 text-sm font-medium text-gray-900">
+                        <td className="px-3 py-2 pr-8 text-sm font-medium text-gray-900 align-middle whitespace-nowrap">
                           #{user.id}
                         </td>
-                      <td className="px-2 sm:px-3 py-2">
-                        <div className="flex items-center min-w-0">
-                          <div className="flex-shrink-0 h-8 w-8">
-                            <div
-                              className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                              style={{ backgroundColor: "rgb(7,72,94)" }}
+                        <td className="px-3 py-2 pl-8 pr-6 align-middle">
+                          <div className="flex items-center min-w-0 gap-5">
+                            <div className="flex-shrink-0 h-8 w-8">
+                              <div
+                                className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
+                                style={{ backgroundColor: "rgb(7,72,94)" }}
+                              >
+                                {user.name.charAt(0).toUpperCase()}
+                              </div>
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-sm font-medium text-gray-900 whitespace-normal break-words" title={user.name}>
+                                {user.name}
+                              </div>
+                              <div className="text-xs text-gray-500 lg:hidden truncate" title={user.email}>{user.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 text-sm text-gray-500 align-middle">
+                          <div className="truncate max-w-[360px] xl:max-w-[520px]" title={user.email}>{user.email}</div>
+                        </td>
+                        <td className="px-3 py-2 text-sm font-medium align-middle">
+                          <div className="flex gap-2 flex-wrap">
+                            <button
+                              onClick={() => handleEditClick(user)}
+                              className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
+                              style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
                             >
-                              {user.name.charAt(0).toUpperCase()}
-                            </div>
+                              <Edit size={12} className="mr-1" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
+                            >
+                              <Trash2 size={12} className="mr-1" />
+                              Delete
+                            </button>
                           </div>
-                          <div className="ml-2 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">
-                              {user.name}
-                            </div>
-                            <div className="text-sm text-gray-500 sm:hidden truncate max-w-[340px] xl:max-w-[480px]" title={user.email}>{user.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-2 sm:px-3 py-2 text-sm text-gray-500">
-                        <div className="truncate max-w-[280px] lg:max-w-[320px] xl:max-w-[480px]" title={user.email}>{user.email}</div>
-                      </td>
-                      <td className="px-2 sm:px-3 py-2 text-sm font-medium">
-                        <div className="flex gap-2 flex-wrap">
-                          <button
-                            onClick={() => handleEditClick(user)}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
-                            style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
-                            aria-label="Edit user"
-                          >
-                            <Edit size={14} />
-                            <span className="hidden xl:inline ml-1">Edit</span>
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
-                            aria-label="Delete user"
-                          >
-                            <Trash2 size={14} />
-                            <span className="hidden xl:inline ml-1">Delete</span>
-                          </button>
-                        </div>
-                      </td>
+                        </td>
                       </motion.tr>
                     );
                   })}
