@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Building2, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import { 
+  Building2, 
+  Search, 
+  RefreshCw, 
+  Edit, 
+  Trash2 
+} from "lucide-react";
 import EditSupplierModal from "../masters/EditSupplierModal";
 
 const SupplierList = () => {
@@ -9,32 +16,34 @@ const SupplierList = () => {
   const [editSupplier, setEditSupplier] = useState(null);
 
   useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:5000/api/master/supplier/get-supplier",
-          { credentials: "include" }
-        );
-        const data = await res.json();
-        setSuppliers(res.ok ? data.suppliers || [] : []);
-      } catch {
-        setSuppliers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchSuppliers();
   }, []);
+
+  const fetchSuppliers = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/master/supplier/get-supplier",
+        { credentials: "include" }
+      );
+      const data = await res.json();
+      setSuppliers(res.ok ? data.suppliers || [] : []);
+    } catch {
+      setSuppliers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredSuppliers = suppliers.filter((s) => {
     const term = searchTerm.toLowerCase();
     return (
-      (s.name?.toLowerCase().startsWith(term) || "") ||
-      (s.contactPerson?.toLowerCase().startsWith(term) || "") ||
-      (s.phone?.toLowerCase().startsWith(term) || "") ||
-      (s.email?.toLowerCase().startsWith(term) || "") ||
-      (s.gstNumber?.toLowerCase().startsWith(term) || "") ||
-      (s.panNumber?.toLowerCase().startsWith(term) || "")
+      s.name?.toLowerCase().includes(term) ||
+      s.contactPerson?.toLowerCase().includes(term) ||
+      s.phone?.toLowerCase().includes(term) ||
+      s.email?.toLowerCase().includes(term) ||
+      s.gstNumber?.toLowerCase().includes(term) ||
+      s.panNumber?.toLowerCase().includes(term)
     );
   });
 
@@ -60,45 +69,193 @@ const SupplierList = () => {
     );
   };
 
-  return (
-    <div className="max-w-6xl mx-auto py-8 px-3 sm:px-4 w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div className="flex items-center gap-2">
-          <Building2 size={28} className="text-[rgb(7,72,94)]" />
-          <h1 className="text-2xl sm:text-3xl font-bold text-[rgb(7,72,94)]">
-            Supplier List
-          </h1>
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-center">
+          <div
+            className="w-12 h-12 border-4 border-gray-200 border-t-4 rounded-full animate-spin mx-auto"
+            style={{ borderTopColor: "rgb(7,72,94)" }}
+          ></div>
+          <p className="mt-4" style={{ color: "rgb(7,72,94)" }}>
+            Loading suppliers...
+          </p>
         </div>
-        <p className="text-gray-600 mt-1 sm:mt-0">
-          Total suppliers: {suppliers.length}
-        </p>
       </div>
+    );
+  }
+
+  return (
+    <div className="w-full">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6"
+      >
+        <div className="flex flex-row justify-between items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <Building2 size={28} style={{ color: "rgb(7,72,94)" }} />
+            <div>
+              <h1
+                className="text-2xl sm:text-3xl font-bold"
+                style={{ color: "rgb(7,72,94)" }}
+              >
+                Supplier List
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Manage all your suppliers ({suppliers.length} total)
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={fetchSuppliers}
+            className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
+            style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+        </div>
+      </motion.div>
 
       {/* Search */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-3 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search suppliers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[rgb(7,72,94)] focus:outline-none transition-colors"
-          />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="mb-6 bg-white rounded-xl shadow-lg overflow-hidden"
+      >
+        <div
+          className="px-4 sm:px-6 py-4 border-b"
+          style={{ backgroundColor: "#CDE1E6" }}
+        >
+          <h2
+            className="text-lg font-semibold"
+            style={{ color: "rgb(7,72,94)" }}
+          >
+            Search Suppliers
+          </h2>
         </div>
-      </div>
-      {loading ? (
-        <div className="text-center py-10 text-gray-500">Loading suppliers...</div>
-      ) : filteredSuppliers.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">No suppliers found.</div>
+        <div className="p-4 sm:p-6">
+          <div className="relative">
+            <Search
+              size={20}
+              className="absolute left-3 top-2.5 sm:top-3 text-gray-400"
+            />
+            <input
+              type="text"
+              placeholder="Search suppliers by name, contact, phone, email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+              style={{ "--tw-ring-color": "rgb(7,72,94)" }}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* No Results */}
+      {filteredSuppliers.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div
+            className="px-6 py-4 border-b"
+            style={{ backgroundColor: "#CDE1E6" }}
+          >
+            <h2
+              className="text-lg font-semibold"
+              style={{ color: "rgb(7,72,94)" }}
+            >
+              Supplier Results
+            </h2>
+          </div>
+          <div className="p-12 text-center text-gray-500">
+            No suppliers found.
+          </div>
+        </div>
       ) : (
-        <div className="flex flex-col lg:flex-row lg:gap-4">
-          <div className="hidden lg:block overflow-x-auto bg-white rounded-xl shadow-lg">
-            {/* Desktop Table */}
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[rgb(205,225,230)]">
-                <tr>
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div
+            className="px-6 py-4 border-b"
+            style={{ backgroundColor: "#CDE1E6" }}
+          >
+            <h2
+              className="text-lg font-semibold"
+              style={{ color: "rgb(7,72,94)" }}
+            >
+              Supplier List ({filteredSuppliers.length})
+            </h2>
+          </div>
+
+          {/* Mobile/Tablet Card View */}
+          <div className="block lg:hidden">
+            <div className="grid grid-cols-1 gap-4 p-4">
+              {filteredSuppliers.map((s) => (
+                <div
+                  key={s._id}
+                  className="p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-semibold text-gray-900 truncate">
+                      {s.name}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        s.status === "active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      {s.status}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>
+                      <span className="font-medium">Contact:</span>{" "}
+                      {s.contactPerson}
+                    </p>
+                    <p>
+                      <span className="font-medium">Phone:</span> {s.phone}
+                    </p>
+                    <p>
+                      <span className="font-medium">Email:</span>{" "}
+                      <span className="break-words">{s.email}</span>
+                    </p>
+                    <p>
+                      <span className="font-medium">GST:</span>{" "}
+                      {s.gstNumber || "—"}
+                    </p>
+                    <p>
+                      <span className="font-medium">PAN:</span>{" "}
+                      {s.panNumber || "—"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      className="px-3 py-2 bg-yellow-100 text-yellow-700 rounded text-xs flex-1"
+                      onClick={() => handleEdit(s)}
+                    >
+                      <Edit size={14} className="inline mr-1" />
+                      Edit
+                    </button>
+                    <button
+                      className="px-3 py-2 bg-red-100 text-red-700 rounded text-xs flex-1"
+                      onClick={() => handleDelete(s._id)}
+                    >
+                      <Trash2 size={14} className="inline mr-1" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 bg-gray-50">
                   {[
                     "Name",
                     "Contact Person",
@@ -111,7 +268,8 @@ const SupplierList = () => {
                   ].map((col) => (
                     <th
                       key={col}
-                      className="px-3 py-3 text-left text-sm font-semibold text-[rgb(7,72,94)]"
+                      className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                      style={{ color: "rgb(7,72,94)" }}
                     >
                       {col}
                     </th>
@@ -120,35 +278,49 @@ const SupplierList = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredSuppliers.map((s) => (
-                  <tr key={s.supplierId || s._id} className="hover:bg-gray-50">
-                    <td className="px-3 py-3">{s.name}</td>
-                    <td className="px-3 py-3">{s.contactPerson}</td>
-                    <td className="px-3 py-3">{s.phone}</td>
-                    <td className="px-3 py-3">{s.email}</td>
-                    <td className="px-3 py-3">{s.gstNumber}</td>
-                    <td className="px-3 py-3">{s.panNumber}</td>
+                  <tr key={s._id} className="hover:bg-gray-50">
+                    <td className="px-3 py-3 text-sm font-medium text-gray-900">
+                      {s.name}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-500">
+                      {s.contactPerson}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-500">
+                      {s.phone}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-500 truncate max-w-56">
+                      {s.email}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-500">
+                      {s.gstNumber}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-500">
+                      {s.panNumber}
+                    </td>
                     <td className="px-3 py-3">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
                           s.status === "active"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-100 text-green-800"
                             : "bg-gray-200 text-gray-600"
                         }`}
                       >
                         {s.status}
                       </span>
                     </td>
-                    <td className="px-3 py-3 flex gap-2 flex-wrap">
+                    <td className="px-3 py-3 flex gap-2">
                       <button
                         className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs"
                         onClick={() => handleEdit(s)}
                       >
+                        <Edit size={14} className="inline mr-1" />
                         Edit
                       </button>
                       <button
                         className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs"
                         onClick={() => handleDelete(s._id)}
                       >
+                        <Trash2 size={14} className="inline mr-1" />
                         Delete
                       </button>
                     </td>
@@ -156,57 +328,6 @@ const SupplierList = () => {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          {/* Mobile / Tablet Card View */}
-          <div className="lg:hidden mt-4 divide-y divide-gray-200">
-            {filteredSuppliers.map((s) => (
-              <div key={s._id} className="p-4 bg-white rounded-lg shadow mb-3">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold text-gray-900">{s.name}</h3>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      s.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {s.status}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-500 space-y-1">
-                  <p>
-                    <span className="font-medium">Contact:</span> {s.contactPerson}
-                  </p>
-                  <p>
-                    <span className="font-medium">Phone:</span> {s.phone}
-                  </p>
-                  <p>
-                    <span className="font-medium">Email:</span> <span className="break-words">{s.email}</span>
-                  </p>
-                  <p>
-                    <span className="font-medium">GST:</span> <span className="break-words">{s.gstNumber}</span>
-                  </p>
-                  <p>
-                    <span className="font-medium">PAN:</span> <span className="break-words">{s.panNumber}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <button
-                      className="px-3 py-2 bg-yellow-100 text-yellow-700 rounded text-xs flex-1 sm:flex-none text-center"
-                      onClick={() => handleEdit(s)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="px-3 py-2 bg-red-100 text-red-700 rounded text-xs flex-1 sm:flex-none text-center"
-                      onClick={() => handleDelete(s._id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )}

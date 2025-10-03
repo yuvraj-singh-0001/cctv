@@ -474,18 +474,15 @@ const SupplierForm = () => {
   // Render the list view
   const renderList = () => (
     <div className="w-full">
-      <div className="max-w-5xl mx-auto">
+      <div className="w-full">
         {/* Header with Toggle Button */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            <Building2 size={28} style={{ color: "rgb(7,72,94)" }} />
-            <h1 className="text-2xl font-bold" style={{ color: "rgb(7,72,94)" }}>
-              Supplier List
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold" style={{ color: "rgb(7,72,94)" }}>
+            Supplier List
+          </h1>
           <button
             onClick={() => setCurrentView("form")}
-            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-lg"
+            className="ml-auto px-4 py-2 rounded-lg font-medium flex items-center transition-all hover:shadow-lg"
             style={{
               backgroundColor: 'rgb(7,72,94)',
               color: 'white',
@@ -503,5 +500,4 @@ const SupplierForm = () => {
 
   return currentView === "form" ? renderForm() : renderList();
 };
-
 export default SupplierForm;
