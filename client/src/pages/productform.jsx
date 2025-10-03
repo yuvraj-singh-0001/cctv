@@ -91,7 +91,7 @@ const ProductForm = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-hidden px-3 sm:px-0">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
@@ -107,7 +107,7 @@ const ProductForm = () => {
               CCTV Product Form
             </h1>
           </div>
-          <p className="text-gray-600 ml-12">
+          <p className="text-gray-600 ml-0 sm:ml-12">
             Fill in the product details to add to your inventory
           </p>
         </motion.div>
@@ -132,11 +132,11 @@ const ProductForm = () => {
           className="bg-white rounded-xl shadow-lg overflow-hidden"
         >
           {/* Form Header with Save Button */}
-          <div className="px-6 py-4 border-b flex justify-between items-center" style={{backgroundColor: '#CDE1E6'}}>
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3" style={{backgroundColor: '#CDE1E6'}}>
             <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
               Product Information
             </h2>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
@@ -153,7 +153,7 @@ const ProductForm = () => {
                     nightVision: false
                   });
                 }}
-                className="px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2"
+                className="px-3 sm:px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 w-full sm:w-auto text-sm sm:text-base"
                 style={{
                   backgroundColor: 'white',
                   color: 'rgb(7,72,94)',
@@ -167,7 +167,7 @@ const ProductForm = () => {
                 type="submit"
                 form="product-form"
                 disabled={isSubmitting}
-                className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 transition-all hover:shadow-lg"
+                className="px-3 sm:px-4 py-2 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 transition-all hover:shadow-lg w-full sm:w-auto text-sm sm:text-base"
                 style={{
                   backgroundColor: 'rgb(7,72,94)',
                   color: 'white',
@@ -190,7 +190,7 @@ const ProductForm = () => {
           </div>
 
           {/* Form */}
-          <form id="product-form" onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form id="product-form" onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Basic Information Section */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -200,7 +200,7 @@ const ProductForm = () => {
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
                     Product Name *
@@ -243,7 +243,7 @@ const ProductForm = () => {
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
                     Brand *
@@ -301,7 +301,7 @@ const ProductForm = () => {
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
                     Price (₹) *
@@ -353,7 +353,7 @@ const ProductForm = () => {
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{color: 'rgb(7,72,94)'}}>
                     Resolution
