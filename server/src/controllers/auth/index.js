@@ -4,9 +4,14 @@ const router = express.Router();
 const login = require("../../api/auth/login");
 const register = require("../../api/auth/register");
 const { addUser, getUsers, updateUser, deleteUser } = require("../../api/auth/users");
+const authMiddleware = require("../../middleware/auth");
 
+
+router.get("/authcheck",authMiddleware); // protected route example")
+// Public routes
 router.post("/register", register);
 router.post("/login", login);
+
 
 // ✅ CRUD routes
 router.post("/users/add", addUser);    // Add new user
