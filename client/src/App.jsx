@@ -8,18 +8,10 @@ import Dashboard from "./pages/dashboard.jsx";
 import ProductForm from "./pages/productform.jsx"; 
 import UserManagement from "./pages/UserManagement.jsx";
 import ProductList from "./pages/ProductList.jsx";
-import SupplierForm from "./masters/supplier-form"; // sahi path check karein
+import SupplierForm from "./masters/supplier-form.jsx"; // sahi path check karein
 import SupplierList from "./masters/supplier-list.jsx";
 
-// Simple protected route wrapper
-function ProtectedRoute({ children }) {
-  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('auth') === 'true';
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-}
-
+import ProtectedRoute from "./protected/protected.jsx";
 function App() {
   return (
     <Router>
@@ -80,11 +72,7 @@ function App() {
           </ProtectedRoute>
         } />
         
-        <Route path="/" element={
-          (typeof window !== 'undefined' && localStorage.getItem('auth') === 'true')
-            ? <Navigate to="/dashboard" replace />
-            : <Navigate to="/login" replace />
-        } />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );
