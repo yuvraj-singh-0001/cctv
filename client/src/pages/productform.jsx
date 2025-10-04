@@ -99,15 +99,15 @@ const ProductForm = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <div className="flex items-center gap-3 mb-2">
+          {/* <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-white shadow-sm">
               <Package size={24} style={{color: 'rgb(7,72,94)'}} />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold truncate" style={{color: 'rgb(7,72,94)'}}>
               CCTV Product Form
             </h1>
-          </div>
-          <p className="text-gray-600 ml-0 sm:ml-12">
+          </div> */}
+          <p className=" text-gray-600 ml-0 sm:ml-4">
             Fill in the product details to add to your inventory
           </p>
         </motion.div>
