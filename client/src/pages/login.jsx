@@ -57,7 +57,7 @@ function Login() {
         {/* Title with Logo */}
         <h2 className="flex items-center justify-center text-2xl sm:text-3xl font-bold text-[#07485E] mb-6 space-x-2">
           <img src={Logo} alt="CCTV Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
-          <span>CCTV Manage</span>
+          <span>Welcome Back </span>                                                      
         </h2>
 
         {/* Form */}

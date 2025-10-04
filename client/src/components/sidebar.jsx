@@ -21,7 +21,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     // { id: 'productform', label: 'Add Product', icon: PlusCircle, path: '/productform' },
-    { id: 'product-list', label: 'Product Manage', icon: List, path: '/product-list' }, // Product management via list page
+    { id: 'product-list', label: 'Product Management', icon: List, path: '/product-list' }, // Product management via list page
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
     // { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' }
