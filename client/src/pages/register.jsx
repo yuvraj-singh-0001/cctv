@@ -66,7 +66,7 @@ function Register() {
         className="bg-white/95 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-[380px] border-t-4 border-[#07485E]"
       >
         <h2 className="text-3xl font-bold text-center text-[#07485E] mb-6">
-          Create Account ✨
+          Create New Account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
