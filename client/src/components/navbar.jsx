@@ -17,11 +17,10 @@ function Navbar() {
   // Sidebar menu items replicated for use in mobile navbar
   const appMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { id: 'productform', label: 'Add Product', icon: PlusCircle, path: '/productform' },
-    { id: 'product-list', label: 'Product List', icon: List, path: '/product-list' },
+    { id: 'product-list', label: 'Product Management', icon: List, path: '/product-list' },
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
-    { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' }
+   // { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' }
   ];
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';

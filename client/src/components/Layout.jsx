@@ -12,7 +12,7 @@ function Layout({ children, showNavbar = false, showSidebar = true }) {
   useEffect(() => {
     const path = location.pathname;
     if (path === '/dashboard') setActiveTab('dashboard');
-    else if (path === '/productform') setActiveTab('productform');
+    // else if (path === '/productform') setActiveTab('productform');
     else if (path === '/user-management') setActiveTab('user-management');
     else if (path === '/product-list') setActiveTab('product-list');
   }, [location.pathname]);
