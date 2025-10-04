@@ -1,6 +1,7 @@
 // src/pages/dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import  API_BASE_URL  from "../components/apiconfig/api-config";
 import { 
   PlusCircle, 
   Users, 
@@ -34,8 +35,8 @@ function Dashboard() {
     try {
       // Fetch all products and today's products in parallel
       const [allProductsResponse, todayProductsResponse] = await Promise.all([
-        fetch('http://localhost:5000/api/products'),
-        fetch('http://localhost:5000/api/products/today')
+        fetch(`${API_BASE_URL}/api/products`),
+        fetch(`${API_BASE_URL}/api/products/today`)
       ]);
       
       const allProductsData = await allProductsResponse.json();

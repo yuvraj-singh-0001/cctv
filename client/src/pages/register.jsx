@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import  API_BASE_URL  from "../components/apiconfig/api-config";
 
 function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -18,7 +19,7 @@ function Register() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -28,7 +29,7 @@ function Register() {
 
       if (res.ok && data.success) {
         setMessage("✅ Registration successful!");
-        const loginRes = await fetch("http://localhost:5000/api/auth/login", {
+        const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

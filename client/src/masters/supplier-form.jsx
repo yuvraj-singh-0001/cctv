@@ -15,7 +15,7 @@ import {
   List
 } from "lucide-react";
 import SupplierList from "../masters/supplier-list"; // Import your SupplierList component
-
+import  API_BASE_URL  from"../components/apiconfig/api-config";
 const SupplierForm = () => {
   const [currentView, setCurrentView] = useState("form"); // "form" or "list"
   const [form, setForm] = useState({
@@ -65,7 +65,7 @@ const SupplierForm = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/master/supplier/add", {
+      const res = await fetch(`${API_BASE_URL}/api/master/supplier/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

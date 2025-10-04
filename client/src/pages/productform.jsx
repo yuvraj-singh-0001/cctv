@@ -1,6 +1,7 @@
 // src/pages/productform.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import API_BASE_URL  from "../components/apiconfig/api-config";
 import { 
   Package, 
   Save, 
@@ -44,7 +45,7 @@ const ProductForm = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/products/add', {
+      const response = await fetch(`${API_BASE_URL}/api/products/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

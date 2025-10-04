@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Edit, Trash2, RefreshCw, Users, Plus, Search } from "lucide-react";
 import EditUserModal from "../components/EditUserModal";
 import AddUserModal from "../components/AddUserModal";
+import  API_BASE_URL  from "../components/apiconfig/api-config";
+
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -19,7 +21,7 @@ function UserManagement() {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/users");
+      const res = await fetch(`${API_BASE_URL}/api/auth/users`);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setUsers(data.users);
@@ -38,7 +40,7 @@ function UserManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/${id}`, {
         method: "DELETE",
       });
       if (!res.ok)
@@ -56,7 +58,7 @@ function UserManagement() {
 
   const handleEditSave = async (id, updateData) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
@@ -81,7 +83,7 @@ function UserManagement() {
 
   const handleAddUser = async (userData) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/users/add", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

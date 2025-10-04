@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Logo from "../components/logo.png"; // logo import
-
+import API_BASE_URL from "../components/apiconfig/api-config";
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ function Login() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   credentials: "include", // Important: send and receive cookies
