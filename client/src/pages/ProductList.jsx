@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import  API_BASE_URL  from "../components/apiconfig/api-config";
 import { 
   Package, 
   Search, 
@@ -8,6 +9,7 @@ import {
   List
 } from 'lucide-react';
 import ProductForm from './productform';
+
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -32,7 +34,7 @@ function ProductList() {
   const loadProducts = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${API_BASE_URL}/api/products`);
       const data = await response.json();
       
       if (data.success) {

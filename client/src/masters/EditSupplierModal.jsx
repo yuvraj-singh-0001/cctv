@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { X, Save, Building2 } from "lucide-react";
+import  API_BASE_URL  from "../components/apiconfig/api-config";
 
 const EditSupplierModal = ({ supplier, onClose, onUpdate }) => {
   const [form, setForm] = useState(supplier);
@@ -17,7 +18,7 @@ const EditSupplierModal = ({ supplier, onClose, onUpdate }) => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `http://localhost:5000/api/master/supplier/edit/${supplier._id}`,
+        `${API_BASE_URL}/api/master/supplier/edit/${supplier._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

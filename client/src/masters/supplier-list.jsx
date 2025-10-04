@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import  API_BASE_URL  from "../components/apiconfig/api-config";
 import { 
   Building2, 
   Search, 
@@ -22,8 +23,7 @@ const SupplierList = () => {
   const fetchSuppliers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/master/supplier/get-supplier",
+      const res = await fetch(`${API_BASE_URL}/api/master/supplier/get-supplier`,
         { credentials: "include" }
       );
       const data = await res.json();
@@ -54,7 +54,7 @@ const SupplierList = () => {
       return;
     try {
       const res = await fetch(
-        `http://localhost:5000/api/master/supplier/delete/${id}`,
+        `${API_BASE_URL}/api/master/supplier/delete/${id}`,
         { method: "DELETE", credentials: "include" }
       );
       if (res.ok) setSuppliers(suppliers.filter((s) => s._id !== id));
