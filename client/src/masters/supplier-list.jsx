@@ -232,14 +232,14 @@ const SupplierList = () => {
                   </div>
                   <div className="flex gap-2 mt-3">
                     <button
-                      className="px-3 py-2 bg-yellow-100 text-yellow-700 rounded text-xs flex-1"
+                      className="px-3 py-2 bg-[#DC2626] hover:bg-[#b91c1c] text-white rounded text-xs flex-1 transition-colors duration-150"
                       onClick={() => handleEdit(s)}
                     >
                       <Edit size={14} className="inline mr-1" />
                       Edit
                     </button>
                     <button
-                      className="px-3 py-2 bg-red-100 text-red-700 rounded text-xs flex-1"
+                      className="px-3 py-2 bg-[#07485E] hover:bg-[#063646] text-white rounded text-xs flex-1 transition-colors duration-150"
                       onClick={() => handleDelete(s._id)}
                     >
                       <Trash2 size={14} className="inline mr-1" />
@@ -310,14 +310,14 @@ const SupplierList = () => {
                     </td>
                     <td className="px-3 py-3 flex gap-2">
                       <button
-                        className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs"
+                        className="px-2 py-1 bg-[#07485E] hover:bg-[#163646] text-white rounded text-xs transition-colors duration-150"
                         onClick={() => handleEdit(s)}
                       >
                         <Edit size={14} className="inline mr-1" />
                         Edit
                       </button>
                       <button
-                        className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs"
+                        className="px-2 py-1 bg-[#DC2626] hover:bg-[#f91c1c] text-white rounded text-xs transition-colors duration-150"
                         onClick={() => handleDelete(s._id)}
                       >
                         <Trash2 size={14} className="inline mr-1" />
