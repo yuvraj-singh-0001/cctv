@@ -477,9 +477,7 @@ const SupplierForm = () => {
       <div className="w-full">
         {/* Header with Toggle Button */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold" style={{ color: "rgb(7,72,94)" }}>
-            Supplier List
-          </h1>
+  
           <button
             onClick={() => setCurrentView("form")}
             className="ml-auto px-4 py-2 rounded-lg font-medium flex items-center transition-all hover:shadow-lg"
