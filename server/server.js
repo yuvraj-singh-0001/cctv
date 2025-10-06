@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const cookieParser = require('cookie-parser'); // <-- add this
+const cookieParser = require('cookie-parser'); 
 const routes = require('./src/routes/router');
 const { connectDB } = require('./src/api/config/db');
 const masterRoutes = require('./src/controllers/master');
