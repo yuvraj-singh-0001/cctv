@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import { Edit, Trash2, RefreshCw, Users, Plus, Search } from "lucide-react";
 import EditUserModal from "../components/EditUserModal";
 import AddUserModal from "../components/AddUserModal";
-import  API_BASE_URL  from "../components/apiconfig/api-config";
-
+import API_BASE_URL from "../components/apiconfig/api-config";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -13,8 +12,6 @@ function UserManagement() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
-  // 👉 states for search & filter
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOption, setFilterOption] = useState("All");
 
@@ -113,7 +110,6 @@ function UserManagement() {
     setAddModalOpen(false);
   };
 
-  // 👉 Combine search + filter
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -150,77 +146,77 @@ function UserManagement() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="w-full"
-    >
-      {/* Header Section */}
-      <div className="mb-4 sm:mb-6 flex flex-row justify-between items-center gap-3 sm:gap-4">
-        <div className="flex-1 min-w-0">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-xl sm:text-2xl font-bold truncate"
-            style={{ color: "rgb(7,72,94)" }}
-          >
-            User Management Dashboard
-          </motion.h1>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex gap-2 sm:gap-3 shrink-0"
+    <div className="w-full">
+      {/* Header Row - Title and Add User Button */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-4"
+      >
+        <h1
+          className="text-2xl font-bold"
+          style={{ color: "rgb(7,72,94)" }}
         >
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium transition-all hover:shadow-md flex items-center gap-2 text-sm sm:text-base"
-            style={{
-              backgroundColor: "rgb(7,72,94)",
-              color: "white",
-            }}
-          >
-            <Plus size={16} />
-            Add User
-          </button>
-        </motion.div>
-      </div>
+          User Management
+        </h1>
+        
+        <button
+          onClick={() => setAddModalOpen(true)}
+          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
+          style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
+        >
+          <Plus size={18} />
+          Add User
+        </button>
+      </motion.div>
 
-      {/* Search and Filter Section */}
+      {/* Second Row - Description, Search and Refresh */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-4 flex flex-col sm:flex-row gap-3"
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2"
       >
-        {/* Search Bar */}
-        <div className="flex-1 flex items-center bg-white rounded-lg px-3 py-2 shadow-sm">
-          <Search size={16} className="text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search users by name or email..."
-            className="ml-2 outline-none text-sm flex-1"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        {/* Filter Dropdown */}
-        <div className="flex items-center">
+        <p className="text-gray-700 font-medium">Manage all your users</p>
+        
+        <div className="flex items-center gap-2">
+          {/* Compact Search Bar */}
+          <div className="relative">
+            <Search
+              size={16}
+              className="absolute left-3 top-2.5 text-gray-400"
+            />
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-48 pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm transition-colors"
+              style={{ "--tw-ring-color": "rgb(7,72,94)" }}
+            />
+          </div>
+          
+          {/* Compact Filter Dropdown */}
           <select
             value={filterOption}
             onChange={(e) => setFilterOption(e.target.value)}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:shadow-md transition-all outline-none"
-            style={{ color: "rgb(7,72,94)" }}
+            className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:border-transparent transition-colors"
+            style={{ "--tw-ring-color": "rgb(7,72,94)" }}
           >
-            <option value="All">All Users</option>
+            <option value="All">All</option>
             <option value="Admin">Admins</option>
             <option value="User">Users</option>
             <option value="Guest">Guests</option>
           </select>
+
+          {/* Refresh Button */}
+          <button
+            onClick={fetchUsers}
+            className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg text-sm"
+            style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
+          >
+            <RefreshCw size={14} />
+            Refresh
+          </button>
         </div>
       </motion.div>
 
@@ -228,191 +224,141 @@ function UserManagement() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.1 }}
         className="bg-white rounded-xl shadow-lg overflow-hidden"
       >
         {/* Table Header */}
         <div
-          className="px-4 sm:px-6 py-3 sm:py-4 border-b"
+          className="px-6 py-4 border-b"
           style={{ backgroundColor: "#CDE1E6" }}
         >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <Users size={20} style={{ color: "rgb(7,72,94)" }} />
-              <h2
-                className="text-base sm:text-lg font-semibold truncate"
-                style={{ color: "rgba(40, 41, 41, 1)" }}
-                title={`Users (${filteredUsers.length})`}
-              >
-                Users ({filteredUsers.length})
-              </h2>
-            </div>
-            <button
-              onClick={fetchUsers}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium transition-all hover:shadow-sm text-sm sm:text-[13px]"
-              style={{
-                backgroundColor: "white",
-                color: "rgb(7,72,94)",
-                border: "1.5px solid rgb(7,72,94)",
-              }}
-            >
-              <RefreshCw size={16} />
-              <span className="hidden xs:inline">Refresh</span>
-            </button>
-          </div>
+          <h2
+            className="text-lg font-semibold"
+            style={{ color: "rgb(7,72,94)" }}
+          >
+            User List ({filteredUsers.length})
+          </h2>
         </div>
 
         {filteredUsers.length === 0 ? (
-          <div className="text-center py-12">
-            <Users size={48} className="mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500 text-lg mb-2">No users found</p>
-            <p className="text-gray-400 text-sm">
-              Try adjusting your search or filter
-            </p>
+          <div className="p-12 text-center text-gray-500">
+            No users found.
           </div>
         ) : (
           <>
-            {/* Mobile/Tablet Card View */}
+            {/* Mobile Card View */}
             <div className="block lg:hidden">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-                {filteredUsers.map((user, index) => (
-                  <motion.div
+              <div className="grid grid-cols-1 gap-4 p-4">
+                {filteredUsers.map((user) => (
+                  <div
                     key={user.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.03 }}
                     className="p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center min-w-0">
-                        <div
-                          className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3"
-                          style={{ backgroundColor: "rgb(7,72,94)" }}
-                        >
-                          {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-sm font-semibold text-gray-900 truncate">{user.name}</div>
-                          <div className="text-xs text-gray-500 truncate">{user.email}</div>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditClick(user)}
-                          className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:opacity-90"
-                          style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
-                        >
-                          <Edit size={12} className="mr-1" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
-                        >
-                          <Trash2 size={12} className="mr-1" />
-                          Delete
-                        </button>
-                      </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-gray-900 truncate">
+                        {user.name}
+                      </h3>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          user.role === "Admin"
+                            ? "bg-blue-100 text-blue-800"
+                            : user.role === "User"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {user.role}
+                      </span>
                     </div>
-                  </motion.div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>
+                        <span className="font-medium">Email:</span>{" "}
+                        <span className="break-words">{user.email}</span>
+                      </p>
+                      <p>
+                        <span className="font-medium">ID:</span> #{user.id}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        className="px-3 py-2 bg-[#07485E] hover:bg-[#063646] text-white rounded text-xs flex-1 transition-colors duration-150"
+                        onClick={() => handleEditClick(user)}
+                      >
+                        <Edit size={14} className="inline mr-1" />
+                        Edit
+                      </button>
+                      <button
+                        className="px-3 py-2 bg-[#DC2626] hover:bg-[#b91c1c] text-white rounded text-xs flex-1 transition-colors duration-150"
+                        onClick={() => handleDelete(user.id)}
+                      >
+                        <Trash2 size={14} className="inline mr-1" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden lg:block">
-              <table className="w-full table-fixed">
-                <colgroup>
-                  <col style={{ width: '14rem' }} />
-                  <col style={{ width: '42%' }} />
-                  <col style={{ width: '32%' }} />
-                  <col style={{ width: '12rem' }} />
-                </colgroup>
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
                 <thead>
-                  <tr
-                    className="border-b"
-                    style={{ backgroundColor: "rgb(7,72,94)" }}
-                  >
-                    <th className="px-3 py-3 pr-8 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-3 py-3 pl-8 pr-6 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs sm:text-sm font-medium text-white uppercase tracking-wider w-44">
-                      Actions
-                    </th>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    {["ID", "Name", "Email", "Role", "Actions"].map((col) => (
+                      <th
+                        key={col}
+                        className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                        style={{ color: "rgb(7,72,94)" }}
+                      >
+                        {col}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredUsers.map((user, index) => {
-                    const variants = {
-                      hidden: { opacity: 0, x: -20 },
-                      visible: {
-                        opacity: 1,
-                        x: 0,
-                        transition: { delay: index * 0.05 },
-                      },
-                    };
-
-                    return (
-                      <motion.tr
-                        key={user.id}
-                        variants={variants}
-                        initial="hidden"
-                        animate="visible"
-                        whileHover={{ backgroundColor: "rgba(7,72,94,0.05)" }}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-3 py-2 pr-8 text-sm font-medium text-gray-900 align-middle whitespace-nowrap">
-                          #{user.id}
-                        </td>
-                        <td className="px-3 py-2 pl-8 pr-6 align-middle">
-                          <div className="flex items-center min-w-0 gap-5">
-                            <div className="flex-shrink-0 h-8 w-8">
-                              <div
-                                className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                                style={{ backgroundColor: "rgb(7,72,94)" }}
-                              >
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-sm font-medium text-gray-900 whitespace-normal break-words" title={user.name}>
-                                {user.name}
-                              </div>
-                              <div className="text-xs text-gray-500 lg:hidden truncate" title={user.email}>{user.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-3 py-2 text-sm text-gray-500 align-middle">
-                          <div className="truncate max-w-[360px] xl:max-w-[520px]" title={user.email}>{user.email}</div>
-                        </td>
-                        <td className="px-3 py-2 text-sm font-medium align-middle">
-                          <div className="flex gap-2 flex-wrap">
-                            <button
-                              onClick={() => handleEditClick(user)}
-                              className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium transition-colors hover:opacity-80"
-                              style={{ backgroundColor: "rgb(7,72,94)", color: "white" }}
-                            >
-                              <Edit size={12} className="mr-1" />
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(user.id)}
-                              className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
-                            >
-                              <Trash2 size={12} className="mr-1" />
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    );
-                  })}
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50">
+                      <td className="px-3 py-3 text-sm font-medium text-gray-900">
+                        #{user.id}
+                      </td>
+                      <td className="px-3 py-3 text-sm font-medium text-gray-900">
+                        {user.name}
+                      </td>
+                      <td className="px-3 py-3 text-sm text-gray-500">
+                        {user.email}
+                      </td>
+                      <td className="px-3 py-3">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            user.role === "Admin"
+                              ? "bg-blue-100 text-blue-800"
+                              : user.role === "User"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 flex gap-2">
+                        <button
+                          className="px-2 py-1 bg-[#07485E] hover:bg-[#163646] text-white rounded text-xs transition-colors duration-150"
+                          onClick={() => handleEditClick(user)}
+                        >
+                          <Edit size={14} className="inline mr-1" />
+                          Edit
+                        </button>
+                        <button
+                          className="px-2 py-1 bg-[#DC2626] hover:bg-[#f91c1c] text-white rounded text-xs transition-colors duration-150"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          <Trash2 size={14} className="inline mr-1" />
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -434,7 +380,7 @@ function UserManagement() {
         onClose={handleAddModalClose}
         onSave={handleAddUser}
       />
-    </motion.div>
+    </div>
   );
 }
 
