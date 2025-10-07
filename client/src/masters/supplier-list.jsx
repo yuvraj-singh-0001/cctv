@@ -93,7 +93,7 @@ const SupplierList = () => {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4"
       >
-        <p className="text-gray-700 font-medium">Manage all your suppliers</p>
+        <p className="text-gray-700 font-bold text-xl">Manage all your suppliers</p>
         
         <div className="flex items-center gap-3">
           <div className="relative flex-1 sm:w-80">
