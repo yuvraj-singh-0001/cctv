@@ -3,11 +3,14 @@ const router = express.Router();
 
 const login = require("../../api/auth/login");
 const register = require("../../api/auth/register");
-const { addUser, getUsers, updateUser, deleteUser } = require("../../api/auth/users");
+const {deleteUser } = require("../../api/auth/delete-User");
+const { addUser } = require("../../api/auth/add-new-user");
+const { getUsers } = require("../../api/auth/getUsers");
+const { updateUser } = require("../../api/auth/update-users");  
 const authMiddleware = require("../../middleware/auth");
 
 
-router.get("/authcheck",authMiddleware); // protected route example")
+router.get("/authcheck",authMiddleware); // protected route")
 // Public routes
 router.post("/register", register);
 router.post("/login", login);

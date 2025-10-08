@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 
+// 📌 Get all users
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({}, { name: 1, email: 1, created_at: 1 }).sort({ created_at: -1 });
@@ -10,5 +11,4 @@ const getUsers = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
-module.exports = getUsers;
+module.exports = {getUsers};
