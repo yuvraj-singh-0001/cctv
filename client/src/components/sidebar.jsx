@@ -24,6 +24,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
     { id: 'product-list', label: 'Product Management', icon: List, path: '/product-list' }, // Product management via list page
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
+    { id: 'sales-order', label: 'Purchase Orders', icon: PlusCircle, path: '/sales-order' },
     // { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' }
   ];
 
@@ -112,7 +113,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-3 overflow-y-auto flex flex-col" role="navigation" aria-label="Sidebar">
+          <nav className="flex-1 p-3 flex flex-col" role="navigation" aria-label="Sidebar">
             <ul className="space-y-1 flex-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
@@ -186,7 +187,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 overflow-y-auto flex flex-col" role="navigation" aria-label="Sidebar">
+          <nav className="flex-1 p-4  flex flex-col" role="navigation" aria-label="Sidebar">
             <ul className="space-y-1 flex-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
