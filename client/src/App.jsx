@@ -10,7 +10,7 @@ import UserManagement from "./pages/UserManagement.jsx";
 import ProductList from "./pages/ProductList.jsx";
 import SupplierForm from "./masters/supplier-form.jsx"; // sahi path check karein
 import SupplierList from "./masters/supplier-list.jsx";
-
+import SalesOrder from './pages/sales-order.jsx';
 import ProtectedRoute from "./protected/protected.jsx";
 function App() {
   return (
@@ -68,6 +68,13 @@ function App() {
           <ProtectedRoute>
             <Layout showSidebar={true} showNavbar={false}>
               <SupplierList />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/sales-order" element={
+          <ProtectedRoute>
+            <Layout showSidebar={true} showNavbar={false}>
+              <SalesOrder />
             </Layout>
           </ProtectedRoute>
         } />
