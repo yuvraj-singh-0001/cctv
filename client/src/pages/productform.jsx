@@ -2,16 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import API_BASE_URL from "../components/apiconfig/api-config";
-import {
-  Package,
-  Save,
-  X,
-  DollarSign,
-  Hash,
-  Tag,
-  Settings,
-  CheckCircle
-} from 'lucide-react';
+import {X,CheckCircle} from 'lucide-react';
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({

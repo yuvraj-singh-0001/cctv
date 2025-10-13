@@ -12,6 +12,8 @@ import SupplierForm from "./masters/supplier-form.jsx"; // sahi path check karei
 import SupplierList from "./masters/supplier-list.jsx";
 import SalesOrder from './pages/sales-order.jsx';
 import ProtectedRoute from "./protected/protected.jsx";
+import  SalesOrdersTable from "./pages/sales-orders-list.jsx";
+
 function App() {
   return (
     <Router>
@@ -78,6 +80,14 @@ function App() {
             </Layout>
           </ProtectedRoute>
         } />
+        <Route path="/sales-orders-list" element={
+          <ProtectedRoute>
+            <Layout showSidebar={true} showNavbar={false}>
+              <SalesOrdersTable />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        
         
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
