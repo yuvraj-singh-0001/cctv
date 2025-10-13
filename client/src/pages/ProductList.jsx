@@ -84,16 +84,16 @@ function ProductList() {
   }
 
   return (
-    <div className="w-full pb-16 sm:pb-0">
+    <div className="w-full pb-10 sm:pb-2">
       {/* Header with toggle */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="mb-1"
       >
         <div className="flex flex-row justify-between items-center gap-3 sm:gap-4">
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold" style={{color: 'rgb(7,72,94)'}}>
+            <h1 className="text-2xl sm:text-3xl font-bold mt-2" style={{color: 'rgb(7,72,94)'}}>
               {currentView === 'list' ? 'Product List' : 'CCTV Product Form'}
             </h1>
             {currentView === 'list' && (
