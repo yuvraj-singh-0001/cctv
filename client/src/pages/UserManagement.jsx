@@ -217,11 +217,11 @@ function UserManagement() {
         {/* Table Header */}
         <div
           className="px-6 py-3 border-b"
-          style={{ backgroundColor: "rgb(205,225,230)" }}
+          style={{ backgroundColor: "hsla(192, 64%, 75%, 1.00)" }}
         >
           <h2
             className="text-lg font-semibold"
-            style={{ color: "rgb(7,72,94)" }}
+            style={{ color: "rgba(3, 30, 39, 1)" }}
           >
             User List ({filteredUsers.length})
           </h2>

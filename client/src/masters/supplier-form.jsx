@@ -129,7 +129,7 @@ const SupplierForm = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setCurrentView("list")}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm border-2 rounded-md text-[rgb(7,72,94)] border-[rgb(7,72,94)] hover:bg-[rgb(7,72,94)] hover:text-white transition-all"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm border-2 rounded-md text-[rgb(7,72,94)]  bg-[rgb(7,72,94)] border-[rgb(7,72,94)] hover:bg-[rgba(60, 88, 155, 1)] text-white transition-all"
         >
           <List size={16} /> Show Suppliers
         </motion.button>

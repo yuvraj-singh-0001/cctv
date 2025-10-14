@@ -175,11 +175,16 @@ const OrderForm = () => {
           className="bg-white rounded-lg shadow overflow-hidden"
         >
           {/* ✅ Removed Top Buttons - Only Heading Remains */}
-          <div className="px-3 py-2 border-b flex justify-between items-center bg-teal-100">
-            <h2 className="text-md font-semibold text-teal-900">
+          {/* <div className="px-3 py-2 border-b flex justify-between items-center bg-Blue-300">
+            <div className="flex items-center gap-2">
+              <ShoppingCart size={20} className="text-teal-900" />
+              <h1 className="text-lg font-semibold text-teal-900">New Sales Order</h1>
+            </div>
+            <h2 className="text-md font-semibold text-gray-900" >
               Order Information
             </h2>
-          </div>
+          </div> */}
+          <h2 className='text-lg font-semibold px-6 bg-rgb(150,216,232) text-teal-900'> Order Information</h2>
 
           <form id="order-form" onSubmit={handleSubmit} className="p-2 space-y-3">
             {/* Customer Info */}

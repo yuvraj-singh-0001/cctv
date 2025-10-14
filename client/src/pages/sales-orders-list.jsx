@@ -8,7 +8,9 @@ import {
   User,
   DollarSign,
   Phone,
-  MapPin
+  MapPin,
+  Filter,
+  ChevronDown
 } from 'lucide-react';
 
 function SalesOrdersList() {
@@ -17,6 +19,7 @@ function SalesOrdersList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState('');
   const [filterOrderStatus, setFilterOrderStatus] = useState('');
+  const [expandedOrder, setExpandedOrder] = useState(null);
 
   useEffect(() => {
     loadSalesOrders();
@@ -30,7 +33,6 @@ function SalesOrdersList() {
       
       if (data.success) {
         setOrders(data.orders);
-        console.log('✅ Orders loaded:', data.orders);
       } else {
         console.error('Error fetching sales orders:', data.message);
         setOrders([]);
@@ -41,6 +43,10 @@ function SalesOrdersList() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleOrderExpansion = (orderId) => {
+    setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
   const filteredOrders = orders.filter(order => {
@@ -63,8 +69,7 @@ function SalesOrdersList() {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
     }).format(amount || 0);
   };
 
@@ -73,356 +78,329 @@ function SalesOrdersList() {
     return new Date(dateString).toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric'
     });
   };
 
   const getPaymentStatusColor = (status) => {
     switch (status) {
-      case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Paid': return 'bg-green-100 text-green-800';
-      case 'Cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Pending': return 'bg-red-200 text-[#856404] text-xs';
+      case 'Paid': return 'bg-[#D1ECF1] text-[#0C5460] text-xs';
+      case 'Cancelled': return 'bg-[#F8D7DA] text-[#721C24] text-xs';
+      default: return 'bg-gray-100 text-gray-800 text-xs';
     }
   };
 
   const getOrderStatusColor = (status) => {
     switch (status) {
-      case 'Processing': return 'bg-blue-100 text-blue-800';
-      case 'Shipped': return 'bg-purple-100 text-purple-800';
-      case 'Delivered': return 'bg-green-100 text-green-800';
-      case 'Cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Processing': return 'bg-[#CCE5FF] text-[#004085] text-xs';
+      case 'Shipped': return 'bg-[#E2E3E5] text-[#383D41] text-xs';
+      case 'Delivered': return 'bg-[#D4EDDA] text-[#155724] text-xs';
+      case 'Cancelled': return 'bg-[#F8D7DA] text-[#721C24] text-xs';
+      default: return 'bg-gray-100 text-gray-800 text-xs';
     }
+  };
+
+  const clearFilters = () => {
+    setFilterPaymentStatus('');
+    setFilterOrderStatus('');
+    setSearchTerm('');
   };
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
+      <div className="flex h-40 items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-4 rounded-full animate-spin mx-auto" style={{borderTopColor: 'rgb(7,72,94)'}}></div>
-          <p className="mt-4" style={{color: 'rgb(7,72,94)'}}>
-            Loading sales orders...
-          </p>
+          <div className="w-8 h-8 border-3 border-[#7ED8F6] border-t-[#07485E] rounded-full animate-spin mx-auto mb-2"></div>
+          <p className="text-sm text-gray-600">Loading orders...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full pb-10 sm:pb-2">
-      {/* Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-1"
-      >
-        <div className="flex flex-row justify-between items-center gap-3 sm:gap-4">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold mt-2" style={{color: 'rgb(7,72,94)'}}>
-              Sales Orders
-            </h1>
-            <p className="text-gray-600 mt-1">View and manage all sales orders ({orders.length} orders)</p>
-          </div>
-          <div className="hidden sm:flex gap-2">
-            <button
-              onClick={loadSalesOrders}
-              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
-              style={{ backgroundColor: 'rgb(7,72,94)', color: 'white' }}
-            >
-              <RefreshCw size={16} />
-              Refresh
-            </button>
+    <div className="min-h-screen bg-[#F9FAFB] py-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        
+        {/* Header - Compact */}
+        <div className="mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h1 className="text-xl font-bold text-[#07485E]">Sales Orders</h1>
+              <p className="text-sm text-gray-600"> Manage and track all customer orders  {orders.length}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={loadSalesOrders}
+                className="flex items-center gap-1 px-3 py-2 bg-[#07485E] text-white rounded text-sm hover:bg-[#06374a] transition-colors"
+              >
+                <RefreshCw size={14} />
+                Refresh
+              </button>
+            </div>
           </div>
         </div>
-      </motion.div>
 
-      {/* Mobile Refresh Button */}
-      <div className="sm:hidden mb-4 px-3">
-        <button
-          onClick={loadSalesOrders}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
-          style={{ backgroundColor: 'rgb(7,72,94)', color: 'white' }}
-        >
-          <RefreshCw size={16} />
-          Refresh Orders
-        </button>
-      </div>
+        {/* Search and Filters - Compact */}
+        <div className="mb-4 space-y-2">
+          <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 relative">
+                <Search size={16} className="absolute left-2 top-2.5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search orders..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-[#7ED8F6] focus:border-[#07485E] transition-colors"
+                />
+              </div>
+              
+              <select
+                value={filterPaymentStatus}
+                onChange={(e) => setFilterPaymentStatus(e.target.value)}
+                className="px-2 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-[#7ED8F6] focus:border-[#07485E] transition-colors"
+              >
+                <option value="">All Payments</option>
+                {paymentStatusOptions.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
 
-      {/* Search & Filter Toolbar */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-6"
-      >
-        <div className="flex flex-col sm:flex-row items-center gap-4 px-4 py-3 border rounded-lg bg-gray-50">
-          {/* Search Box */}
-          <div className="relative flex-1 w-full">
-            <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by order number, customer name, phone, or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
-              style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-            />
-          </div>
+              <select
+                value={filterOrderStatus}
+                onChange={(e) => setFilterOrderStatus(e.target.value)}
+                className="px-2 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-[#7ED8F6] focus:border-[#07485E] transition-colors"
+              >
+                <option value="">All Status</option>
+                {orderStatusOptions.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
 
-          {/* Payment Status Filter */}
-          <div className="w-full sm:w-40">
-            <select
-              value={filterPaymentStatus}
-              onChange={(e) => setFilterPaymentStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
-              style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-            >
-              <option value="">All Payment</option>
-              {paymentStatusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Order Status Filter */}
-          <div className="w-full sm:w-40">
-            <select
-              value={filterOrderStatus}
-              onChange={(e) => setFilterOrderStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
-              style={{'--tw-ring-color': 'rgb(7,72,94)'}}
-            >
-              <option value="">All Order Status</option>
-              {orderStatusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
+              {(filterPaymentStatus || filterOrderStatus || searchTerm) && (
+                <button
+                  onClick={clearFilters}
+                  className="px-3 py-2 text-gray-600 border border-gray-300 rounded text-sm hover:bg-gray-50 whitespace-nowrap transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </motion.div>
 
-      {/* Orders Display */}
-      {filteredOrders.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
-            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
-              Sales Orders
-            </h2>
-          </div>
-          <div className="p-12 text-center">
-            <ShoppingCart size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm || filterPaymentStatus || filterOrderStatus ? 'No orders match your search' : 'No sales orders found'}
-            </h3>
-            <p className="text-gray-500">
-              {searchTerm || filterPaymentStatus || filterOrderStatus 
-                ? 'Try adjusting your search terms or filters.' 
-                : 'Sales orders will appear here once created.'}
+        {/* Results Count */}
+        {(filterPaymentStatus || filterOrderStatus || searchTerm) && (
+          <div className="mb-3">
+            <p className="text-sm text-[#07485E]">
+              Showing {filteredOrders.length} of {orders.length} orders
             </p>
           </div>
-        </div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b" style={{backgroundColor: '#CDE1E6'}}>
-            <h2 className="text-lg font-semibold" style={{color: 'rgb(7,72,94)'}}>
-              Sales Orders ({filteredOrders.length} orders)
-            </h2>
-          </div>
+        )}
 
-          {/* Mobile Card View */}
-          <div className="block lg:hidden">
-            <div className="grid grid-cols-1 gap-4 p-4">
+        {/* Orders */}
+        {filteredOrders.length === 0 ? (
+          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center shadow-sm">
+            <ShoppingCart size={32} className="mx-auto text-gray-400 mb-2" />
+            <h3 className="text-base font-medium text-[#07485E] mb-1">
+              {searchTerm || filterPaymentStatus || filterOrderStatus ? 'No orders found' : 'No orders yet'}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {searchTerm || filterPaymentStatus || filterOrderStatus 
+                ? 'Try adjusting your search'
+                : 'Orders will appear here once created'}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-2">
               {filteredOrders.map((order) => (
                 <div
                   key={order._id}
-                  className="p-4 rounded-xl border border-gray-200 bg-white hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                        <ShoppingCart size={20} className="text-blue-600" />
+                  <div 
+                    className="p-3 cursor-pointer"
+                    onClick={() => toggleOrderExpansion(order._id)}
+                  >
+                    {/* Order Header */}
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-8 h-8 rounded-lg bg-[#E6F7FE] flex items-center justify-center flex-shrink-0">
+                            <ShoppingCart size={14} className="text-[#07485E]" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-sm font-semibold text-[#07485E] truncate">
+                              {order.order_number || `ORD-${order._id?.slice(-6)}`}
+                            </h3>
+                            <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-gray-900 truncate">
-                          {order.order_number || `ORD-${order._id?.slice(-6)}`}
-                        </h3>
-                        <p className="text-xs text-gray-500 truncate">
-                          {formatDate(order.createdAt)}
-                        </p>
+                      <div className="flex flex-col items-end gap-1 ml-2">
+                        <span className={`px-2 py-1 rounded ${getPaymentStatusColor(order.payment_status)}`}>
+                          {order.payment_status}
+                        </span>
+                        <span className={`px-2 py-1 rounded ${getOrderStatusColor(order.order_status)}`}>
+                          {order.order_status}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1 items-end">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
-                        {order.payment_status}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getOrderStatusColor(order.order_status)}`}>
-                        {order.order_status}
-                      </span>
+
+                    {/* Order Summary */}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <p className="text-gray-600">Customer</p>
+                        <p className="font-medium text-[#07485E] truncate">{order.customer_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Phone</p>
+                        <p className="font-medium text-[#07485E]">{order.customer_phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Total</p>
+                        <p className="font-bold text-[#07485E]">{formatCurrency(order.grand_total)}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Items</p>
+                        <p className="font-medium text-[#07485E]">{(order.items || []).length}</p>
+                      </div>
+                    </div>
+
+                    {/* Expand Button */}
+                    <div className="flex justify-center mt-2 pt-2 border-t border-gray-100">
+                      <button className="flex items-center gap-1 text-xs text-[#07485E] hover:text-[#06374a] transition-colors">
+                        {expandedOrder === order._id ? 'Show Less' : 'View Details'}
+                        <ChevronDown size={12} className={expandedOrder === order._id ? 'rotate-180' : ''} />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User size={14} className="text-gray-400" />
-                      <span className="text-gray-600">Customer:</span>
-                      <span className="font-medium truncate">{order.customer_name}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Phone size={14} className="text-gray-400" />
-                      <span className="text-gray-600">Phone:</span>
-                      <span className="font-medium truncate">{order.customer_phone}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <DollarSign size={14} className="text-gray-400" />
-                      <span className="text-gray-600">Total:</span>
-                      <span className="font-bold" style={{color: 'rgb(7,72,94)'}}>
-                        {formatCurrency(order.grand_total)}
-                      </span>
-                    </div>
-
-                    <div className="pt-2 border-t">
-                      <span className="text-gray-600 text-xs">Items ({order.items?.length || 0}):</span>
-                      <div className="mt-1 space-y-1">
-                        {(order.items || []).slice(0, 2).map((item, index) => (
-                          <div key={index} className="flex justify-between text-xs">
-                            <span className="truncate flex-1">
-                              {item.product?.productName || `Item ${index + 1}`}
-                            </span>
-                            <span className="ml-2 text-gray-500">
-                              {item.quantity} × {formatCurrency(item.price)}
-                            </span>
+                  {/* Expanded Details */}
+                  {expandedOrder === order._id && (
+                    <div className="px-3 pb-3 border-t border-gray-100">
+                      <div className="pt-2 space-y-2">
+                        {/* Items List */}
+                        <div>
+                          <h4 className="text-xs font-medium text-[#07485E] mb-1">Order Items</h4>
+                          <div className="space-y-1">
+                            {(order.items || []).map((item, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 bg-[#F9FAFB] rounded text-xs">
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-medium text-[#07485E] truncate">
+                                    {item.product?.productName || `Item ${index + 1}`}
+                                  </p>
+                                  <p className="text-gray-500">Qty: {item.quantity}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-semibold text-[#07485E]">{formatCurrency(item.price)}</p>
+                                  <p className="text-gray-500">Total: {formatCurrency(item.quantity * item.price)}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                        {(order.items || []).length > 2 && (
-                          <div className="text-xs text-gray-500">
-                            +{(order.items || []).length - 2} more items
+                        </div>
+
+                        {/* Amount Breakdown */}
+                        <div className="grid grid-cols-2 gap-2 p-2 bg-[#E6F7FE] rounded text-xs">
+                          <div>
+                            <p className="text-gray-600">Subtotal</p>
+                            <p className="font-semibold text-[#07485E]">{formatCurrency(order.subtotal)}</p>
+                          </div>
+                          {order.tax > 0 && (
+                            <div>
+                              <p className="text-gray-600">Tax</p>
+                              <p className="font-semibold text-[#07485E]">{formatCurrency(order.tax)}</p>
+                            </div>
+                          )}
+                          <div className="col-span-2 pt-1 border-t border-[#7ED8F6]">
+                            <p className="text-gray-600">Grand Total</p>
+                            <p className="font-bold text-[#07485E]">{formatCurrency(order.grand_total)}</p>
+                          </div>
+                        </div>
+
+                        {/* Customer Address */}
+                        {order.customer_address && (
+                          <div>
+                            <h4 className="text-xs font-medium text-[#07485E] mb-1">Address</h4>
+                            <div className="flex items-start gap-1 p-2 bg-[#F9FAFB] rounded text-xs">
+                              <MapPin size={12} className="text-gray-400 mt-0.5 flex-shrink-0" />
+                              <p className="text-gray-700">{order.customer_address}</p>
+                            </div>
                           </div>
                         )}
                       </div>
                     </div>
-
-                    {order.customer_address && (
-                      <div className="flex items-start gap-2 pt-2 border-t">
-                        <MapPin size={14} className="text-gray-400 mt-0.5" />
-                        <span className="text-gray-600 text-xs">Address:</span>
-                        <span className="text-xs text-gray-500 flex-1 truncate">{order.customer_address}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Order Details
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Customer
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Items
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Amount
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Date
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Payment
-                  </th>
-                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{color: 'rgb(7,72,94)'}}>
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredOrders.map((order) => (
-                  <tr 
-                    key={order._id}
-                    className="cursor-pointer hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-3">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-2">
-                          <ShoppingCart size={16} className="text-blue-600" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate max-w-32">
-                            {order.order_number || `ORD-${order._id?.slice(-6)}`}
+            {/* Desktop Table View - Compact */}
+            <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-[#F9FAFB]">
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Order</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Customer</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Items</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Amount</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Date</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Payment</th>
+                      <th className="px-3 py-2 text-left font-medium text-[#07485E]">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredOrders.map((order) => (
+                      <tr key={order._id} className="hover:bg-[#F9FAFB] transition-colors">
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded bg-[#E6F7FE] flex items-center justify-center">
+                              <ShoppingCart size={12} className="text-[#07485E]" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-[#07485E]">
+                                {order.order_number || `ORD-${order._id?.slice(-6)}`}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {order._id?.slice(-8)}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="text-sm font-medium text-gray-900 truncate max-w-32">
-                        {order.customer_name}
-                      </div>
-                      <div className="text-xs text-gray-500 truncate max-w-32">
-                        {order.customer_phone}
-                      </div>
-                      <div className="text-xs text-gray-400 truncate max-w-32">
-                        {order.customer_email}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="text-sm text-gray-500">
-                        {(order.items || []).length} items
-                      </div>
-                      <div className="text-xs text-gray-400 truncate max-w-40">
-                        {(order.items || []).slice(0, 2).map(item => 
-                          item.product?.productName || 'Product'
-                        ).join(', ')}
-                        {(order.items || []).length > 2 && '...'}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="text-sm font-medium text-gray-900">
-                        {formatCurrency(order.grand_total)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Subtotal: {formatCurrency(order.subtotal)}
-                      </div>
-                      {order.tax > 0 && (
-                        <div className="text-xs text-gray-500">
-                          Tax: {formatCurrency(order.tax)}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-3 text-sm text-gray-500">
-                      {formatDate(order.createdAt)}
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
-                        {order.payment_status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getOrderStatusColor(order.order_status)}`}>
-                        {order.order_status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="font-medium text-[#07485E]">{order.customer_name}</div>
+                          <div className="text-gray-500 text-xs">{order.customer_phone}</div>
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="text-[#07485E]">{(order.items || []).length} items</div>
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="font-bold text-[#07485E]">{formatCurrency(order.grand_total)}</div>
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="text-[#07485E]">{formatDate(order.createdAt)}</div>
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className={`inline-flex px-2 py-1 rounded ${getPaymentStatusColor(order.payment_status)}`}>
+                            {order.payment_status}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className={`inline-flex px-2 py-1 rounded ${getOrderStatusColor(order.order_status)}`}>
+                            {order.order_status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
