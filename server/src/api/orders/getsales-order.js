@@ -5,7 +5,8 @@ const getAllSalesOrders = async (req, res) => {
   try {
     // You can add filters or pagination later if needed
     const salesOrders = await SalesOrder.find()
-      .populate("items.product", "productName price") // product name and price show karne ke liye
+     .populate("items.product", "product_name price")
+ // product name and price show karne ke liye
       .sort({ createdAt: -1 }); // latest orders first
  
 
