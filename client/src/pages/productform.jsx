@@ -1,4 +1,4 @@
-// src/pages/ProductForm.jsx
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import API_BASE_URL from "../components/apiconfig/api-config";

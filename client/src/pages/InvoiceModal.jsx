@@ -28,29 +28,49 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
         })
       : "N/A";
 
-  // ✅ Correct per-item calculation (discount & tax scale by quantity)
-  const calculateItemTotal = (item, taxPercent, discountPercent) => {
+  // ✅ सही और Clear Calculation (Product-wise Tax & Discount)
+  const calculateItemTotal = (item) => {
     const price = parseFloat(item.price || 0);
     const qty = parseFloat(item.quantity || 0);
+    
+    // Product-specific tax और discount (अगर available हो)
+    const itemTaxPercent = item.tax_percentage || selectedOrder.tax || 0;
+    const itemDiscountPercent = item.discount_percentage || selectedOrder.discount || 0;
 
-    const base = price * qty;
-    const discountAmount = ((price * (discountPercent || 0)) / 100) * qty;
-    const afterDiscount = base - discountAmount;
-    const taxAmount = (afterDiscount * (taxPercent || 0)) / 100;
-    const total = afterDiscount + taxAmount;
+    // Base amount
+    const baseAmount = price * qty;
+    
+    // Discount calculation
+    const discountAmount = (baseAmount * itemDiscountPercent) / 100;
+    const amountAfterDiscount = baseAmount - discountAmount;
+    
+    // Tax calculation (discounted amount पर)
+    const taxAmount = (amountAfterDiscount * itemTaxPercent) / 100;
+    
+    // Final total
+    const finalTotal = amountAfterDiscount + taxAmount;
 
     return {
-      base: parseFloat(base.toFixed(2)),
-      disc: parseFloat(discountAmount.toFixed(2)),
-      tax: parseFloat(taxAmount.toFixed(2)),
-      total: parseFloat(total.toFixed(2)),
+      baseAmount: parseFloat(baseAmount.toFixed(2)),
+      discountAmount: parseFloat(discountAmount.toFixed(2)),
+      taxAmount: parseFloat(taxAmount.toFixed(2)),
+      finalTotal: parseFloat(finalTotal.toFixed(2)),
+      itemTaxPercent,
+      itemDiscountPercent,
+      unitPrice: price
     };
   };
 
-  // ✅ Totals calculation (aggregated properly)
+  // ✅ Totals calculation
   const calculateTotals = () => {
     if (!selectedOrder?.items?.length)
-      return { subtotal: 0, discountTotal: 0, taxTotal: 0, grandTotal: 0, totalItems: 0 };
+      return { 
+        subtotal: 0, 
+        discountTotal: 0, 
+        taxTotal: 0, 
+        grandTotal: 0, 
+        totalItems: 0 
+      };
 
     let subtotal = 0,
       discountTotal = 0,
@@ -58,11 +78,11 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
       grandTotal = 0;
 
     selectedOrder.items.forEach((item) => {
-      const c = calculateItemTotal(item, selectedOrder.tax, selectedOrder.discount);
-      subtotal += c.base;
-      discountTotal += c.disc;
-      taxTotal += c.tax;
-      grandTotal += c.total;
+      const calc = calculateItemTotal(item);
+      subtotal += calc.baseAmount;
+      discountTotal += calc.discountAmount;
+      taxTotal += calc.taxAmount;
+      grandTotal += calc.finalTotal;
     });
 
     return {
@@ -80,25 +100,52 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
   if (!selectedOrder) return null;
   const totals = calculateTotals();
 
-  // ✅ PDF Download
+  // ✅ Optimized PDF Download for A4
   const handleDownloadPDF = async () => {
     if (!invoiceRef.current) return alert("Invoice not found!");
     setIsGeneratingPDF(true);
 
     try {
+      // Create a clone for PDF generation
       const invoiceClone = invoiceRef.current.cloneNode(true);
+      
+      // Apply A4 specific styles
       invoiceClone.style.width = "210mm";
+      invoiceClone.style.minHeight = "297mm";
+      invoiceClone.style.padding = "15mm";
+      invoiceClone.style.fontSize = "12px";
+      invoiceClone.style.background = "#ffffff";
       invoiceClone.style.position = "absolute";
       invoiceClone.style.left = "-9999px";
       invoiceClone.style.top = "0";
-      invoiceClone.style.background = "#ffffff";
-      invoiceClone.style.padding = "0";
+      
+      // Reduce padding and margins for PDF
+      const elementsToReduce = invoiceClone.querySelectorAll('*');
+      elementsToReduce.forEach(el => {
+        const style = window.getComputedStyle(el);
+        if (parseFloat(style.padding) > 16) {
+          el.style.padding = '8px';
+        }
+        if (parseFloat(style.margin) > 16) {
+          el.style.margin = '8px';
+        }
+      });
+
+      // Reduce font sizes for PDF
+      const largeTexts = invoiceClone.querySelectorAll('h1, h2, h3, h4');
+      largeTexts.forEach(el => {
+        const currentSize = window.getComputedStyle(el).fontSize;
+        el.style.fontSize = `calc(${currentSize} * 0.8)`;
+      });
+
       document.body.appendChild(invoiceClone);
 
       const canvas = await html2canvas(invoiceClone, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
+        width: invoiceClone.scrollWidth,
+        height: invoiceClone.scrollHeight,
         windowWidth: invoiceClone.scrollWidth,
         windowHeight: invoiceClone.scrollHeight,
       });
@@ -108,27 +155,17 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      const imgWidth = pageWidth;
+      // Calculate image dimensions to fit A4
+      const imgWidth = pageWidth - 20; // 10mm margin on each side
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      let finalWidth = imgWidth;
-      let finalHeight = imgHeight;
-
-      if (finalHeight > pageHeight) {
-        const scale = pageHeight / finalHeight;
-        finalWidth = finalWidth * scale;
-        finalHeight = finalHeight * scale;
-      }
-
-      const x = (pageWidth - finalWidth) / 2;
-      const y = (pageHeight - finalHeight) / 2;
-
-      pdf.addImage(imgData, "PNG", x, y, finalWidth, finalHeight, undefined, "FAST");
+      pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight, undefined, "FAST");
       pdf.save(`Invoice-${selectedOrder?.order_number || "Draft"}.pdf`);
 
       document.body.removeChild(invoiceClone);
     } catch (err) {
       console.error("PDF Generation Error:", err);
+      alert("PDF generation failed. Please try again.");
     } finally {
       setIsGeneratingPDF(false);
     }
@@ -149,6 +186,7 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.25 }}
           className="bg-white rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl border border-gray-200 flex flex-col"
+          style={{ maxHeight: '90vh' }}
         >
           {/* Header */}
           <div className="flex flex-wrap justify-between items-center p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
@@ -192,146 +230,167 @@ const InvoiceModal = ({ selectedOrder, onClose, onPrint, isLoading = false }) =>
             </div>
           </div>
 
-          {/* Invoice Body */}
-          <div className="overflow-y-auto max-h-[85vh] p-6 bg-gray-50" ref={invoiceRef}>
+          {/* Invoice Body - Optimized for A4 */}
+          <div className="overflow-y-auto p-4 sm:p-6 bg-gray-50" ref={invoiceRef}>
             {isLoading ? (
               <div className="flex items-center justify-center p-16">
                 <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
-              <div className="flex flex-col min-h-[75vh]">
-                {/* Company Name */}
-                <div className="text-center mb-6">
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-700">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4 print:p-0 print:shadow-none print:border-none">
+                
+                {/* Company Header - Compact */}
+                <div className="text-center mb-4 print:mb-2">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-700 print:text-2xl">
                     CCTV Management Service
                   </h1>
-                  <p className="text-gray-500">B-30, Sector 72, Noida, UP</p>
-                  <p className="text-gray-500">GSTIN: 27AABCU9603R1ZX</p>
+                  <p className="text-gray-500 text-sm print:text-xs">
+                    B-30, Sector 72, Noida, UP | GSTIN: 27AABCU9603R1ZX
+                  </p>
                 </div>
 
-                {/* Unified Bordered Section */}
-                <div className="bg-white rounded-xl shadow-md border border-gray-300 p-6 space-y-6">
-                  {/* Bill To & Company Details */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-bold mb-2 text-lg border-b pb-1">Bill To:</h3>
-                      <p className="font-semibold">{selectedOrder.customer_name || "Customer"}</p>
-                      <p>{selectedOrder.customer_email}</p>
-                      <p>{selectedOrder.customer_phone}</p>
-                      <p>{selectedOrder.customer_address}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-bold mb-2 text-lg border-b pb-1">Company Details:</h3>
-                      <p>CCTV Management Service</p>
-                      <p>singhyuvraj8420@gmail.com</p>
-                      <p>+91 86013 00910</p>
-                      <p>PAN: AABCU9603R</p>
-                    </div>
+                {/* Customer & Company Details - Compact */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm print:text-xs">
+                  <div className="border border-gray-200 p-3 rounded-lg">
+                    <h3 className="font-bold mb-1 border-b pb-1 text-base print:text-sm">Bill To:</h3>
+                    <p className="font-semibold">{selectedOrder.customer_name || "Customer"}</p>
+                    <p>{selectedOrder.customer_email}</p>
+                    <p>{selectedOrder.customer_phone}</p>
+                    <p className="text-xs text-gray-600">{selectedOrder.customer_address}</p>
                   </div>
+                  <div className="border border-gray-200 p-3 rounded-lg">
+                    <h3 className="font-bold mb-1 border-b pb-1 text-base print:text-sm">Company Details:</h3>
+                    <p>CCTV Management Service</p>
+                    <p>singhyuvraj8420@gmail.com</p>
+                    <p>+91 86013 00910</p>
+                    <p className="text-xs text-gray-600">PAN: AABCU9603R</p>
+                  </div>
+                </div>
 
-                  {/* Items Table */}
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm sm:text-base border border-gray-200">
-                      <thead>
-                        <tr className="bg-gray-100 border-b border-gray-300">
-                          <th className="p-2 text-left">#</th>
-                          <th className="p-2 text-left">Product Name</th>
-                          <th className="p-2 text-right">Qty</th>
-                          <th className="p-2 text-right">Unit ₹</th>
-                          <th className="p-2 text-right">Discount ₹</th>
-                          <th className="p-2 text-right">Tax ₹</th>
-                          <th className="p-2 text-right">Total ₹</th>
+                {/* Items Table - Compact */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs sm:text-sm border border-gray-200 print:text-xs">
+                    <thead>
+                      <tr className="bg-gray-100 border-b border-gray-300">
+                        <th className="p-1 sm:p-2 text-left">#</th>
+                        <th className="p-1 sm:p-2 text-left">Product Name</th>
+                        <th className="p-1 sm:p-2 text-right">Qty</th>
+                        <th className="p-1 sm:p-2 text-right">Unit ₹</th>
+                        <th className="p-1 sm:p-2 text-right">Base Amt</th>
+                        <th className="p-1 sm:p-2 text-right">Disc</th>
+                        <th className="p-1 sm:p-2 text-right">Tax</th>
+                        <th className="p-1 sm:p-2 text-right">Total ₹</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {selectedOrder.items?.length ? (
+                        selectedOrder.items.map((item, idx) => {
+                          const calc = calculateItemTotal(item);
+                          return (
+                            <tr key={idx} className="hover:bg-gray-50">
+                              <td className="p-1 sm:p-2">{idx + 1}</td>
+                              <td className="p-1 sm:p-2">
+                                <div>
+                                  <div className="font-semibold text-xs">
+                                    {item.product?.product_name || "Product"}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    {calc.itemDiscountPercent > 0 && `Disc: ${calc.itemDiscountPercent}%`}
+                                    {calc.itemDiscountPercent > 0 && calc.itemTaxPercent > 0 && ' • '}
+                                    {calc.itemTaxPercent > 0 && `Tax: ${calc.itemTaxPercent}%`}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="p-1 sm:p-2 text-right">{item.quantity}</td>
+                              <td className="p-1 sm:p-2 text-right">{formatCurrency(calc.unitPrice)}</td>
+                              <td className="p-1 sm:p-2 text-right">{formatCurrency(calc.baseAmount)}</td>
+                              <td className="p-1 sm:p-2 text-right text-red-600">
+                                -{formatCurrency(calc.discountAmount)}
+                              </td>
+                              <td className="p-1 sm:p-2 text-right text-green-600">
+                                +{formatCurrency(calc.taxAmount)}
+                              </td>
+                              <td className="p-1 sm:p-2 text-right font-semibold text-blue-700">
+                                {formatCurrency(calc.finalTotal)}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan="8" className="text-center py-4 text-gray-500">
+                            No items found
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {selectedOrder.items?.length ? (
-                          selectedOrder.items.map((item, idx) => {
-                            const c = calculateItemTotal(
-                              item,
-                              selectedOrder.tax,
-                              selectedOrder.discount
-                            );
-                            return (
-                              <tr key={idx} className="hover:bg-gray-50">
-                                <td className="p-2">{idx + 1}</td>
-                                <td className="p-2">
-                                  {item.product?.product_name || "Product"}
-                                </td>
-                                <td className="p-2 text-right">{item.quantity}</td>
-                                <td className="p-2 text-right">
-                                  {formatCurrency(item.price)}
-                                </td>
-                                <td className="p-2 text-right text-red-600">
-                                  -{formatCurrency(c.disc)}
-                                </td>
-                                <td className="p-2 text-right text-green-600">
-                                  +{formatCurrency(c.tax)}
-                                </td>
-                                <td className="p-2 text-right font-semibold text-blue-700">
-                                  {formatCurrency(c.total)}
-                                </td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td colSpan="7" className="text-center py-6 text-gray-500">
-                              No items found
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
 
-                  {/* Payment Terms & Invoice Summary */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2 border-b pb-1">
-                        Payment Terms
-                      </h3>
-                      <p className="text-gray-600 text-sm">• Payment due within 15 days</p>
-                      <p className="text-gray-600 text-sm">
-                        • Late fee of 1.5% per month applies
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold border-b pb-1 mb-2">
-                        Invoice Summary
-                      </h4>
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span>Subtotal:</span>
-                          <span>{formatCurrency(totals.subtotal)}</span>
+                {/* Compact Calculation Breakdown */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 print:p-2">
+                  <h4 className="font-bold text-sm mb-2 text-blue-800 border-b border-blue-300 pb-1">
+                    Calculation Breakdown
+                  </h4>
+                  <div className="space-y-2 text-xs">
+                    {selectedOrder.items?.map((item, idx) => {
+                      const calc = calculateItemTotal(item);
+                      return (
+                        <div key={idx} className="pb-2 border-b border-blue-200 last:border-0">
+                          <div className="font-semibold text-blue-700 text-xs">
+                            {idx + 1}. {item.product?.product_name || "Product"} (Qty: {item.quantity})
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-1">
+                            <div>Base: {formatCurrency(calc.unitPrice)} × {item.quantity} = {formatCurrency(calc.baseAmount)}</div>
+                            {calc.itemDiscountPercent > 0 && (
+                              <div>Disc: {formatCurrency(calc.baseAmount)} × {calc.itemDiscountPercent}% = -{formatCurrency(calc.discountAmount)}</div>
+                            )}
+                            {calc.itemTaxPercent > 0 && (
+                              <div>Tax: {formatCurrency(calc.baseAmount - calc.discountAmount)} × {calc.itemTaxPercent}% = +{formatCurrency(calc.taxAmount)}</div>
+                            )}
+                            <div className="font-semibold">Total: {formatCurrency(calc.finalTotal)}</div>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Discount:</span>
-                          <span className="text-red-600">
-                            -{formatCurrency(totals.discountTotal)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Tax:</span>
-                          <span className="text-green-600">
-                            +{formatCurrency(totals.taxTotal)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between border-t pt-2 font-bold">
-                          <span>Total:</span>
-                          <span>{formatCurrency(totals.grandTotal)}</span>
-                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Summary & Terms - Side by Side */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm print:text-xs">
+                  <div className="border border-gray-200 p-3 rounded-lg">
+                    <h3 className="font-semibold mb-2 border-b pb-1 text-base print:text-sm">Payment Terms</h3>
+                    <p className="text-gray-600">• Payment due within 15 days</p>
+                    <p className="text-gray-600">• Late fee of 1.5% per month</p>
+                  </div>
+                  <div className="border border-gray-200 p-3 rounded-lg">
+                    <h4 className="font-bold mb-2 border-b pb-1 text-base print:text-sm">Invoice Summary</h4>
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span>Subtotal ({totals.totalItems} items):</span>
+                        <span>{formatCurrency(totals.subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total Discount:</span>
+                        <span className="text-red-600">-{formatCurrency(totals.discountTotal)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total Tax:</span>
+                        <span className="text-green-600">+{formatCurrency(totals.taxTotal)}</span>
+                      </div>
+                      <div className="flex justify-between border-t pt-1 font-bold text-base print:text-sm">
+                        <span>Grand Total:</span>
+                        <span className="text-blue-700">{formatCurrency(totals.grandTotal)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Footer */}
-                <div className="mt-2 py-40 text-center text-sm text-gray-600">
-                  <p className="font-semibold text-gray-800">
-                    Thank you for your business!
-                  </p>
-                  <p>For queries: support@CCTV Management.in</p>
-                  <p className="text-xs text-gray-400 mt-2">
+                {/* Compact Footer */}
+                <div className="text-center text-xs text-gray-600 border-t pt-3 mt-4 print:pt-2 print:mt-2">
+                  <p className="font-semibold text-gray-800">Thank you for your business!</p>
+                  <p>For queries: support@CCTVManagement.in</p>
+                  <p className="text-gray-400 mt-1">
                     This invoice is computer-generated and does not require a signature.
                   </p>
                 </div>
