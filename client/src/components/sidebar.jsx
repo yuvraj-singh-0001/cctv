@@ -26,6 +26,7 @@ function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
     { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
     { id: 'sales-order', label: 'Purchase Orders', icon: PlusCircle, path: '/sales-order' },
     { id: 'sales-orders-list', label: 'Purchase Orders List', icon: List, path: '/sales-orders-list' },
+    { id: 'debit-notes', label: 'Debit Notes', icon: List, path: '/debit-notes' },
   ];
 
   // Sync activeTab with URL

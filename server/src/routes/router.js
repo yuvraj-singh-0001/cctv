@@ -6,6 +6,7 @@ const master = require('../controllers/master/index');
 const order = require('../controllers/orders/index');
 const authMiddleware = require('../middleware/auth');
 
+
 router.use('/auth', auth);
 router.use('/products', products);
 router.use('/master', master);

@@ -13,6 +13,7 @@ import SupplierList from "./masters/supplier-list.jsx";
 import SalesOrder from './pages/sales-order.jsx';
 import ProtectedRoute from "./protected/protected.jsx";
 import  SalesOrdersTable from "./pages/sales-orders-list.jsx";
+import DebitNoteForm from './pages/DebitNoteForm.jsx';
 
 function App() {
   return (
@@ -84,6 +85,13 @@ function App() {
           <ProtectedRoute>
             <Layout showSidebar={true} showNavbar={false}>
               <SalesOrdersTable />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/debit-notes" element={
+          <ProtectedRoute>
+            <Layout showSidebar={true} showNavbar={false}>
+              <DebitNoteForm />
             </Layout>
           </ProtectedRoute>
         } />
