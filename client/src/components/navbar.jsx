@@ -21,6 +21,8 @@ function Navbar() {
     { id: 'user-management', label: 'User Management', icon: Users, path: '/user-management' },
     { id: 'supplier-management', label: 'Supplier Management', icon: Users, path: '/supplier-management' },
    // { id: 'supplier-list', label: 'Supplier List', icon: Building2, path: '/supplier-list' }
+    { id: 'sales-order', label: 'Purchase Orders', icon: PlusCircle, path: '/sales-order' },
+    { id: 'sales-orders-list', label: 'Purchase Orders List', icon: List, path: '/sales-orders-list' },
   ];
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import API_BASE_URL from "../components/apiconfig/api-config";
-import { Save, X, CheckCircle, Plus, Trash2} from 'lucide-react';
+import { Save, X, CheckCircle, Plus, Trash2 } from 'lucide-react';
 
 const OrderForm = () => {
   const [formData, setFormData] = useState({
